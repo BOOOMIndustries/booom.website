@@ -1,0 +1,278 @@
+/*
+*  Place all the styles related to the matching controller here.
+*  They will automatically be included in application.css.
+*
+*	Here is css docs for editor page 
+**/
+/****************************************************************
+	Side Menu - font lib 
+****************************************************************/
+@import url(//fonts.googleapis.com/css?family=Abel);
+@import url(//fonts.googleapis.com/css?family=Orbitron);
+@import url(//fonts.googleapis.com/css?family=Abel|Annie+Use+Your+Telescope);
+@import url(//fonts.googleapis.com/css?family=Shadows+Into+Light);
+@import url(//fonts.googleapis.com/css?family=Pompiere|Didact+Gothic);
+@import url(//fonts.googleapis.com/css?family=Ubuntu+Mono);
+.font-abel{	font-family: 'Abel', sans-serif;	}
+.font-Orbitron{ font-family: 'Orbitron', sans-serif; }
+.font-AnnieUseYourTelescope{	font-family: 'Annie Use Your Telescope', cursive;	}
+.font-shadowsIntoLight{	font-family: 'Shadows Into Light', cursive; }
+.font-pompiere{	font-family: 'Pompiere', cursive;	}
+.font-DidactGothic{ font-family: 'Didact Gothic', sans-serif; }
+.font-ubuntuMono{font-family: 'Ubuntu Mono',;}
+
+/****************************************************************
+	Side Menu - on the left 
+****************************************************************/
+body{
+	background: #707070 !important;
+}
+/*#editor { #58ACFA}*/
+.black{ background: #000000;	}
+.white{ background: #FFFFFF;	}
+.blue{	background:	#3333FF;	}
+.yellow{ background: #FFFF00; }
+.green{	background: #006633;	}
+.purple{	background: #9933CC;	}
+.pink{	background: #FF33CC;	}
+.lime{	background: #CCFF33;	}
+.turquoise{	background: #33CCCC;	}
+.red{	background: #F00000;	}
+.silver{	background: #C0C0C0;	}
+.brown{	background: #990033;	}
+.border{	border:	1px solid #000000;	}
+.items{	
+	background:#ffffff;
+	width:100%;
+	margin:0;
+	float:left;	
+}
+.hover_background{
+	background:#000000;
+	color:#FFFFFF;
+}
+.color_select{
+	width:15%;
+	height:25px;
+	float:left;
+	margin:1.5%;
+}
+.color_section{
+	margin:3% 0 3% 0;	
+}
+.selector{
+	margin-left: auto;
+	margin-right:auto;
+	background:#ffffff;
+	padding:2%;
+	width:50%;
+}
+
+/****************************************************************
+	Board graphics - right side 
+****************************************************************/
+#snowboarding_editor,#snowbaord_background{
+	
+	background: #FFFFFF;
+	position: absolute;
+}
+.snowboard_graphic_wapper{
+	margin:20% 0 0 0;
+	width:100%;
+}
+.wrapper{
+	width:100%;
+	min-height:143px;
+	/*border: 1px solid #000000;*/
+ }
+#backgound{
+	background: #ffffff; /* #0000FF; */
+}
+
+.boundary{ 
+	/*background: url(<%= asset_path "163_template_hollow.png" %>) no-repeat center;*/
+	-webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+  background-size: contain;
+}
+
+/****************************************************************
+	Board graphics - right side 
+****************************************************************/
+#big_snowboard_graphic_wapper,#big_snowboard_back_graphic_wapper{
+	width:10444px;
+	height:2340px;
+	/*background: rgba(0,0,0,0.8);*/
+	background :#707070;
+	padding:10%;
+	position: absolute;
+
+}
+.big_wapper{
+	width:10203px;
+	height:1950px;
+	position:relative;
+ }
+#big_front_background,#big_back_background{
+	background: #FFFFFF;
+}
+#main_content{
+	margin: 0 0 10% 0;
+}
+/****************************************************************
+	Board graphics - sticky palet
+****************************************************************/
+#big_palet{
+  width: 100%;
+  height:40%;
+  /*background: rgba(225,225,225,0.9);*/
+}
+#bigpalet_button{
+	margin-bottom:5px;
+	width:200px;
+	height:30px;
+	background:#000000;
+  color:#ffffff;
+}
+
+/**************************************************************
+	full size editor 
+**************************************************************/
+#controller_wapper{
+	width:100%;
+	height: 17%;
+	bottom:2%;
+	color:#FFFFFF;
+	background: rgba(0,0,0,0.8);
+}
+.paletIcons,#changeSide{
+	padding:2%;
+}
+#controller_wapper i{
+  font-size: 30px;
+}
+#big_front_boundary,#big_back_boundary{
+	/*background: url(<%= asset_path "163_template_hollow.png"%>) no-repeat center center;*/
+
+	-webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+	width: 10203px;
+	height: 1950px;
+
+}
+/*
+	file uploader 
+*/
+/*
+#images-ctl{
+	width:50%;
+	height:80%;
+	background: rgba(225,225,225,0.9);
+	position:fixed;
+	z-index:6;
+}
+*/
+.dz-message{
+	margin:2%;
+	padding: 10%;
+}
+.big-border{
+	border:20px dashed;
+}
+.dz-message p{
+	font-size: 70px;
+	font-weight: bold;
+	color:#000000;
+}
+.palet-content{
+	width: 50%;
+	background: rgba(225,225,225,0.9);
+	padding:1%;
+	position:relative;	
+	z-index:9;
+	top:10;
+	margin-right: auto;
+	margin-left:auto; 	
+}
+#image-editor-ctl{	
+	width: 50%;
+	background: rgba(225,225,225,0.9);
+	padding:1%;
+	position:fixed;	
+	z-index:10;
+	margin-right: auto;
+	margin-left:auto;
+	left: 25%;
+	bottom: 20%;
+}
+/*
+#style-ctl, #size-ctl{
+		
+			
+		position: relative;
+}*/
+.slider{
+	width: 100%;
+}
+#ex1, #rotationSlider, .slider-selection {
+	widht: 50%;
+	background: #BABABA;
+}
+#colorBlash-ctl{
+	width: 20% !important;
+	bottom:20%;
+	left:0;
+}
+.font-content{
+	width:30%;
+	height:80%;
+	left: 0 !important;
+	top:0 !important;
+} 
+.texts{
+	line-height: 0% !important;
+}
+/* selectable action */
+.ui-selected{
+	backgroud: #CCFF33;
+	color:#FFFFFF;
+}
+ 
+/* rotatable-handler */
+ .ui-rotatable-handle {
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+    /*background-image: url(<%= asset_path "rotate.png" %>")  no-repeat center center;*/
+    background-size: 100%;
+    left: 2px;
+    bottom: 2px;
+}
+.imgLoader{
+	margin: 3% 0 3% 0;
+}
+/*
+	Scrollbar trick 
+*/
+::-webkit-scrollbar {
+      width: 15px;
+}
+
+::-webkit-scrollbar-track {
+      background-color: #000000;
+} /* the new scrollbar will have a flat appearance with the set background color */
+ 
+::-webkit-scrollbar-thumb {
+      background-color: #FFFFFF; 
+} /* this will style the thumb, ignoring the track */
+ 
+::-webkit-scrollbar-button {
+      background-color: #000000;
+} /* optionally, you can style the top and the bottom buttons (left and right for horizontal bars) */
+ 
+::-webkit-scrollbar-corner {
+      background-color: black;
+} /* if both the vertical and the horizontal bars appear, then perhaps the right bottom corner also needs to be styled */

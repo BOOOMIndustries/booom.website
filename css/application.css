@@ -1,0 +1,341 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require dashboard
+ *= require editors
+ *= require_self
+ *= require_tree .
+ */
+@import url(//fonts.googleapis.com/css?family=Abel);
+@import url(//fonts.googleapis.com/css?family=Orbitron);
+@import url(//fonts.googleapis.com/css?family=Abel|Annie+Use+Your+Telescope);
+@import url(//fonts.googleapis.com/css?family=Shadows+Into+Light);
+@import url(//fonts.googleapis.com/css?family=Pompiere|Didact+Gothic);
+@import url(//fonts.googleapis.com/css?family=Ubuntu+Mono);
+.font-abel{	font-family: 'Abel', sans-serif;	}
+.font-Orbitron{ font-family: 'Orbitron', sans-serif; }
+.font-AnnieUseYourTelescope{	font-family: 'Annie Use Your Telescope', cursive;	}
+.font-shadowsIntoLight{	font-family: 'Shadows Into Light', cursive; }
+.font-pompiere{	font-family: 'Pompiere', cursive;	}
+.font-DidactGothic{ font-family: 'Didact Gothic', sans-serif; }
+.font-ubuntuMono{font-family: 'Ubuntu Mono',;}
+html, body{ 
+	margin:0; 
+	height:100%; 
+	min-width:100%; 
+	font-size: 10px;
+	
+	color:#FFFFFF;
+	overflow: auto;
+}
+/*
+.ui-rotatable-handle {
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+    background-image: url(<%= asset_path "rotate.png" %>");
+    background-size: 100%;
+    left: 2px;
+    bottom: 2px;
+}
+*/
+ul{	list-style-type:none;	}
+h1,h2,h3,h4,h5,h6{	font-family:'Ubuntu Mono',; }
+p{
+	font-family: 'Ubuntu Mono',;
+	font-size:15px;
+	line-height: 180%;
+}
+.cursor{ cursor: pointer; }
+.transparent_black_bg{	background: rgba(0,0,0,0.7);	}
+
+#logo{
+	margin: 10% 0 0 0;
+}
+.menus img{
+	height: 50px;
+}
+#menus{ width: 100%;}
+#reg{ 
+	width:100%;
+	margin-top:10%;
+}
+
+.form-group{ padding: 0 5% 0 5%;}
+.zm2{ z-index:-2;}
+.zn{	z-index:-1;}
+.z0{ z-index:0;	}
+.z1{ z-index:1;	}
+.z2{ z-index:2;	}
+.z3{ z-index:3;	}
+.z4{ z-index:4; }
+.z5{ z-index:5; }
+.z6{ z-index:6; }
+.z7{ z-index:7; }
+.z8{ z-index:8; }
+.z9{ z-index:9; }
+.z10{z-index:10;}
+.z11{z-index:11;}
+.z12{z-index:12;}
+.z13{z-index:13;}
+.z14{z-index:14;}
+.z15{z-index:15;}
+.fixed{position:fixed;}
+.relative{position:relative;}
+.absolute{position:absolute;}
+.right{	float:right;	}
+.left{ float:left;	}
+.black_bk{	background: #000000;	}
+.center-text{	text-align:center;	}
+.center-img{	margin-left:auto; margin-right:auto; display: block;	}
+.white-text{color:#FFFFFF;	}
+.rounded_corner{	border-radius:15px;	}
+#menu p{ 
+	text-align:center;	
+}
+
+.rotate{
+	-webkit-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	-ms-transform: rotate(-90deg);
+	-o-transform: rotate(-90deg);
+	transform: rotate(-90deg);
+}
+#reg-bg{
+	width:100%;
+	min-height:786px;
+	background-color: rgba(0,0,0,0.5);
+	color:#FFFFFF;
+}
+#reg{	
+	color: #FFFFFF; 
+	font-size: 10px;
+	padding-top:5%;
+}
+#reg h2{	
+	font-family:'Ubuntu Mono',;
+	text-align: center;
+}
+/*.menu_detail{
+	background-color:rgba(225,225,225,0.7);
+	color:#000000;
+	width:100%;
+	height:0;
+	z-index: 1;
+	padding:5% 2% 2% 2%;
+
+}*/
+
+#login, .menu{	
+	color:#FFFFFF;	
+	font-size:12px;
+	text-align: right;
+	height:50px;
+	padding:1% 2% 0 0;
+}
+.login{
+	color:#000000;
+	background:#ffffff;
+}
+
+.border{ border: 5px bold #000000;	}
+b.panels{ min-height:786px; }
+#selector{
+	margin-top:20%;
+}
+/*#wakeboarding_bk{
+	width:100%;
+	min-height: 786px;
+	background: url( <%= asset_path "Patrick-Hall-Wakeboard-Tube-1.jpg" %> ) no-repeat center fixed;
+	-webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+#snowboarding_bk{
+	width:100%;
+	min-height: 786px;
+	background: url( <%= asset_path "890071-snowboarding-wallpaper.jpg" %>) no-repeat center fixed;
+	-webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}*/
+
+.panels{
+	width:100%;
+	min-height: 786px;
+} 
+.panels-half{
+	min-height:393px;
+}
+/*#panel1 .icon_wrapper{
+	padding:10% 0 5% 0;
+}*/
+/**************************************************************
+	footer design 
+**************************************************************/
+#footer{
+	background: #000000;
+	color: #FFFFFF;
+	min-height: 300px;
+}
+#industry_information{
+	padding-top:10%;
+}
+.footer_content_wrapper{
+	padding: 10% 0% 0% 0%;
+}
+#copyright{
+	padding:3%;
+}
+#footer .icons{
+	margin: 10% 0 5% 0;
+}
+.icons i {
+  width: 40px;
+  height: 40px;
+  color: #FFF;
+  background-color: #909AA0;
+  font-size: 22px;
+  text-align:center;
+  padding-top: 12px;
+  border-radius: 50%;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -o-border-radius: 50%;
+  transition: all ease 0.3s;
+  -moz-transition: all ease 0.3s;
+  -webkit-transition: all ease 0.3s;
+  -o-transition: all ease 0.3s;
+  -ms-transition: all ease 0.3s;
+}
+.icons a:hover,.icons a:link, .icons a:visited,.icons a:active{
+	background : rgba(0,0,0,0);
+}
+/******************************************************************
+	Panel 1
+******************************************************************
+#wakeboard{
+	background: url( <%= asset_path "Patrick-Hall-Wakeboard-Tube-1.jpg" %>) no-repeat center center;
+	min-height:768px;
+	-webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+#snowboard{
+	background: url( <%= asset_path "890071-snowboarding-wallpaper.jpg" %>) no-repeat center center;
+	min-height:768px;
+	-webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+.social{
+  width:100%;
+  margin-left: 60%;
+  padding-top:40%;
+
+}
+.wakeboard-btn, .snowboard-btn{
+	background-color: rgba(0,0,0,0.5);
+	font-family: Impact, Charcoal, sans-serif;
+	margin:0 0 0 0;
+	color:#FFFFFF;
+	width:105%;
+	min-height:768px;
+}
+.wakeboard-btn{
+	margin-right:15px;
+}
+.snowboard-btn{
+	margin-left:-15px;
+}
+
+.wakeboard-btn h1, .snowboard-btn h1{
+	font-size: 70px;
+	letter-spacing: 5px;
+	line-height: 100%;
+	padding-left: 1%;
+}
+.wakeboard-btn p, .snowboard-btn p{
+	padding-left: 3%;
+}
+#wake_btn,#snow_btn{
+	padding:25% 20% 0% 5%;
+}
+******************************************************************
+	Panel 2 
+******************************************************************/
+#about_booom{
+	padding : 10% 0 5% 0;
+}
+#reputation_wrapper{
+	margin:10% 5% 0 10%;
+}
+#reputation_wrapper h3{
+	font-size:65px;
+	margin-bottom:5%;
+}
+/******************************************************************
+	Panel 3
+******************************************************************/
+#panel3{
+	padding: 5% 0 0 0;
+}
+
+
+/******************************************************************
+	Panel 4
+******************************************************************/
+#panel4{
+	/*padding:10% 0 10% 0;*/
+	background: #000000;
+
+}
+/*
+#panel4 .images{
+	float:left;
+}
+#panel4 .img-a{
+	background: url(<%= asset_path "Black-Logo-300x143.png" %>) no-repeat center;
+}
+#panel4 .img-b{
+	background: url(<%= asset_path "2015-liquidforce-wakeboard-supertrip-01.jpg" %>) no-repeat center;
+}
+#panel4 .img-c{
+	background: url(<%= asset_path "burton-custom-snowboard.jpg" %>) no-repeat center;
+}
+#panel4 .img-d{
+	background: url(<%= asset_path "10735100000115_1.jpg" %>) no-repeat center;
+}
+#panel4 .big{
+	width:300px;
+	min-height:300px;
+	-webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+	background-size: cover;
+}
+#panel4 .mid{
+	width: 150px;
+	min-height: 150px;
+	-webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+ 	background-size: contain; 
+}
+#panel4 .small{
+	width: 75px;
+	min-height: 75px;
+}*/
