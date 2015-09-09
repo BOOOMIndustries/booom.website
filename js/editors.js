@@ -145,30 +145,26 @@ ready = function() {
 /**************************************************************
 	Img dialog  
 **************************************************************/  
-	var images = ['#imgLoader','#imgLoader2','#imgLoader3','#imgLoader4','#imgLoader5'];
-	var delIcons = ['#del1','#del2','#del3','#del4','#del5'];
-	var rotationIcons = ['#rot1','#rot2','#rot3','#rot4','#rot5'];
-	var resizeIcons = ['#res1','#res2','#res3','#res4','#res5'];
-	var dragIcons = ['#dor1','#dor2','#dor3','#dor4','#dor5'];
-	var selectedElementNo = 0;
-	var s = 0;
-	$("#add_image").click(function(){		
 	
-		while(!$(images[s]).hasClass('hide') && s < 5){
-			s++;
-		}
-		if(s <5){
-			$(images[s]).removeClass('hide');
-			$(delIcons[s]).removeClass('hide');		
-			$(rotationIcons[s]).removeClass('hide');		
-			$(resizeIcons[s]).removeClass('hide');		
-			$(dragIcons[s]).removeClass('hide');				
+	$("#add_image").click(function(){
+		var ids = ["#i1","#i2","#i3","#i4","#i5"];
+		for(c=0; c < ids.length; c++ ){
+			if($(ids[c]).hasClass("hide")){
+				$(ids[c]).removeClass("hide").addClass("active");
+				break;
+			}
 		}
 	});
 	
-	$(".rrd").click(function(){
+	$(".rrd, .frrd").click(function(){
 		var id_str = $(this).attr('id');
-		var id = id_str.substring(3,id_str.length);
+		var id;
+		if($(this) == '.rrd'){
+		 	id = id_str.substring(3,id_str.length);
+		 	
+		}else{
+			id = id_str.substring(4,id_str.length);
+		}
 		selectedElementNo = id;
 		$("#image-editor-ctl").show().addClass('active').removeClass('hide');	
 		// rotation 
@@ -177,14 +173,15 @@ ready = function() {
 			
 		}
 		// resize
-		else if($(this).hasClass('res')){
-			$("#ctr-content").empty();
-		}
+		// else if($(this).hasClass('res')){
+		// 	$("#ctr-content").empty();
+		// }
 		// dragg
 		else if($(this).hasClass('dor')){
 
 		}
 	});
+	
 	// change the side 
 	$("#changeSide").click(function(){
 		// front side action
@@ -304,8 +301,8 @@ ready = function() {
 	 });
 	
 	$("#rotationSlider").slider().on('slide',function(event,ui){
-		console.log( "angle : " + $(this).data('slider').getValue() + " num " + selectedElementNo);		
-		setAngle(parseInt($(this).data('slider').getValue()), parseInt(selectedElementNo - 1) );
+		console.log( "angle : " + $(this).data('slider').getValue() + " num " + selectedElementNo + " isFont : "+ getSelected());		
+		setAngle(parseInt($(this).data('slider').getValue()), parseInt(selectedElementNo),getSelected() );
 		draw(false,false);
 	});
 	
@@ -396,7 +393,7 @@ ready = function() {
 	var fonts = [];
 	var fontFamilies = [];
 	var fontSizes = [];
-	
+	var fontWidth = [];
 	var curPosX = 0;
 	var curPosY = 0;
 	var imgPosX = [];
@@ -434,13 +431,12 @@ ready = function() {
 		var reader = new FileReader();		
 		reader.onload = function (event){
 			img = new Image();			
-			imgStartX[index] = 100;
-			imgStartY[index] = 100; 			
+			imgStartX[index] = getCenterOfWindowX();
+			imgStartY[index] = getCenterOfWindowY(); 			
 			
 			img.onload = function(){	
 				img.width = getScaledImgWidth(img);
-				img.height = getScaledImgHeight(img);					
-				//ctx.drawImage(img,imgStartX[index],imgStartY[index],img.width,img.height);
+				img.height = getScaledImgHeight(img);									
 				draw(false,false);
 			}
 			img.src = event.target.result;
@@ -448,6 +444,7 @@ ready = function() {
 			rotation[index] = 0;
 			imageCount++;
 			index++;
+			setSelected(false);
 		}	
 		reader.readAsDataURL(e.target.files[0]);
 	}
@@ -462,19 +459,22 @@ ready = function() {
 		
 		//var ctx = canvas.getContext("2d");
 		// ctx.font = "'400pt "+ fontFamily +"'";
-		fontStartX[id] = 300;
-		fontStartY[id] = 300;
-		fontRotation[id] = 0;
+		
+		
 		fonts[id] = '300px Arial';	
 		fontFamilies[id] = 'Arial';
 		fontSizes[id] = 300;
 		strs[id] = str;
-		
+		fontStartX[id] = getCenterOfWindowX();// - getFontWidth(id);
+		fontStartY[id] = getCenterOfWindowY();// - getFontHeight(id);
 		
 		ctx.font = fonts[id];		
-		ctx.fillText(str, fontStartX[id],fontStartY[id]);
+		//ctx.fillText(str, getFXP1(id) ,getFYP1(id));
 		setSelected(true); 
-		drawDots(id);		
+		fontRotation[id] = 0;
+		draw(false,false);
+		printStrs();
+		//drawDots(id);	
 		fontCounts++;		
 		return ctx; 
 	}
@@ -499,30 +499,32 @@ ready = function() {
   } 
 
 	// image points 
-	function getXP1(i){	return parseFloat(imgStartX[i]);	}
-	function getYP1(i){	return parseFloat(imgStartY[i]);	}
-	function getXP2(i){	return parseFloat(imgStartX[i] + imgs[i].width);	}
-	function getYP2(i){	return parseFloat(imgStartY[i]);	}
-	function getXP3(i){	return parseFloat(imgStartX[i]);	}
-	function getYP3(i){	return parseFloat(imgStartY[i] + imgs[i].height); 	}
-	function getXP4(i){	return parseFloat(imgStartX[i] + imgs[i].width ); 	}
-	function getYP4(i){	return parseFloat(imgStartY[i] + imgs[i].height);	}
+	function getXP1(i){	return parseFloat(imgStartX[i] - imgs[i].width/2 );				}
+	function getYP1(i){	return parseFloat(imgStartY[i] - imgs[i].height/2);				}
+	function getXP2(i){	return parseFloat(imgStartX[i] + imgs[i].width/2 );				}
+	function getYP2(i){	return parseFloat(imgStartY[i] - imgs[i].height/2 );			}
+	function getXP3(i){	return parseFloat(imgStartX[i] - imgs[i].width/2  );			}
+	function getYP3(i){	return parseFloat(imgStartY[i] + imgs[i].height/2 ); 			}
+	function getXP4(i){	return parseFloat(imgStartX[i] + imgs[i].width/2  ); 			}
+	function getYP4(i){	return parseFloat(imgStartY[i] + imgs[i].height/2 );			}
 	function getImageWidth(i){	return parseFloat(imgs[i].width);	}
 	function getImageHeight(i){	return parseFloat(imgs[i].height);	}
-	function getImageCenterX(i){	return parseFloat(getXP2(i)/2 ); }
-	function getImageCenterY(i){	return parseFloat(getYP3(i)/2); }	
+	function getImageCenterX(i){	return parseFloat((getXP1(i) + getXP2(i))/2 ); 	}
+	function getImageCenterY(i){	return parseFloat((getYP1(i) + getYP3(i))/2); 	}	
+	function getFontCenterX(i){		return parseFloat((getFXP1(i) + getFXP2(i))/2);	}
+	function getFontCenterY(i){		return parseFloat((getFYP3(i) + getFYP1(i))/2);	}
 	
 	// font points 
-	function getFXP1(i){	return parseFloat(fontStartX[i]);	 }
-	function getFYP1(i){	return parseFloat(fontStartY[i]); 	 }
-	function getFXP2(i){	return parseFloat(fontStartX[i]) + getFontWidth(i);	 }
-	function getFYP2(i){	return parseFloat(fontStartY[i]);	 }
-	function getFXP3(i){	return parseFloat(fontStartX[i]);	 }
-	function getFYP3(i){	return parseFloat(fontStartY[i]) + getFontHeight(i);	 }
-	function getFXP4(i){	return parseFloat(fontStartX[i]) + getFontWidth(i);	 }
-	function getFYP4(i){	return parseFloat(fontStartY[i]) + getFontHeight(i);	 }
-	function getFontWidth(i){		return parseFloat(ctx.measureText(strs[i]).width); }
-	function getFontHeight(i){ return fontSizes[i]; }
+	function getFXP1(i){	return parseFloat(fontStartX[i] - getFontWidth(i)/2);	 }
+	function getFYP1(i){	return parseFloat(fontStartY[i] - getFontHeight(i)/2);  }
+	function getFXP2(i){	return parseFloat(fontStartX[i] + getFontWidth(i)/2);	 }
+	function getFYP2(i){	return parseFloat(fontStartY[i] - getFontHeight(i)/2);	 }
+	function getFXP3(i){	return parseFloat(fontStartX[i] - getFontWidth(i)/2);	 }
+	function getFYP3(i){	return parseFloat(fontStartY[i] + getFontHeight(i)/1.5);	 }
+	function getFXP4(i){	return parseFloat(fontStartX[i] + getFontWidth(i)/2);	 }
+	function getFYP4(i){	return parseFloat(fontStartY[i] + getFontHeight(i)/1.5);	 }
+	function getFontWidth(i){		return fontWidth[i]; }
+	function getFontHeight(i){ return fontSizes[i] * 0.8; }
 	function getFontString(i){	return getFontSize(i) + "px " + getFontFamily(i); }
 	function getFontFamily(i){	return fontFamilies[i];	}
 	function getFontSize(i){	return fontSizes[i]; }
@@ -544,6 +546,13 @@ ready = function() {
 	function getBBoardColor(){	return bBoardColor;	}
 	function getFrontData(){	return frontData;	}
 	function getBackData(){	return backData;	}
+	function getAngle(i,isFont){
+		if(isFont){
+			return fontRotation[i];
+		}else{
+			return rotation[i];
+		}
+	}
 	/*************************************************************
 	*	Angle need to be positive 
 	*  Q1 (+x, +y)
@@ -555,86 +564,125 @@ ready = function() {
 	* 
 	*************************************************************/
 	
-	function getAngledXP1(i){	return getXP1(i);		}	
-	function getAngledYP1(i){	return getYP1(i);		}
+
+	function getAngledXP1(i){
+		var xp1 = getXP1(i) - getImageCenterX(i);
+		var yp1 = getYP1(i) - getImageCenterY(i);
+		var r = parseFloat(rotation[i]);
+		xp1 = parseFloat( (Math.cos( r * Math.PI/180) * xp1) + (Math.sin( r * Math.PI/180 ) * yp1) );			
+		return xp1 + getImageCenterX(i);
+	}
+	
+	function getAngledYP1(i){	
+		var xp1 = getXP1(i) - getImageCenterX(i);
+		var yp1 = getYP1(i) - getImageCenterY(i);
+		var r = rotation[i];
+		yp1 = parseFloat( -(Math.sin( r * Math.PI/180 ) * xp1) + (Math.cos( r * Math.PI/180 ) * yp1 ));			
+		return yp1 + getImageCenterY(i);
+	}
 
 	function getAngledXP2(i){
-		var xp2 = getXP2(i) - getXP1(i);
-		var yp2 = getYP2(i) - getYP1(i);		
-		xp2 = parseFloat( Math.cos((360 - rotation[i])*Math.PI/180) * xp2 + Math.sin((360 - rotation[i])*Math.PI/180) * yp2 );		
-		return xp2 + getXP1(i);
+		var xp2 = getXP2(i) - getImageCenterX(i);
+		var yp2 = getYP2(i) - getImageCenterY(i);
+		var r = rotation[i];
+		xp2 = parseFloat( Math.cos( r * Math.PI/180 ) * xp2 + Math.sin( r * Math.PI/180 ) * yp2 );			
+		return xp2 + getImageCenterX(i);		
 	}
 	
 	function getAngledYP2(i){	
-		var xp2 = getXP2(i) - getXP1(i);
-		var yp2 = getYP2(i) - getYP1(i);
-		yp2 = parseFloat( - Math.sin((360 - rotation[i])*Math.PI/180) * xp2 + Math.cos((360 - rotation[i])*Math.PI/180) * yp2 );			
-		return yp2 + getYP1(i);
+		var xp2 = getXP2(i) - getImageCenterX(i);
+		var yp2 = getYP2(i) - getImageCenterY(i);
+		var r = rotation[i];
+		yp2 = parseFloat( - Math.sin( r * Math.PI/180 ) * xp2 + Math.cos( r * Math.PI/180 ) * yp2 );			
+		return yp2 + getImageCenterY(i);
 	}
 	// following coordinate need to be adjust 
 	function getAngledXP3(i){	
-		var xp3 = getXP3(i) - getXP1(i);
-		var yp3 = getYP3(i) - getYP1(i);		
-		xp3 = parseFloat( Math.cos((360 - rotation[i])*Math.PI/180) * xp3 + Math.sin((360 - rotation[i])*Math.PI/180) * yp3 );		
-		return xp3 + getXP1(i);
+		var xp3 = getXP3(i) - getImageCenterX(i);
+		var yp3 = getYP3(i) - getImageCenterY(i);		
+		var r = rotation[i];
+		xp3 = parseFloat( Math.cos( r * Math.PI/180) * xp3 + Math.sin( r * Math.PI/180 ) * yp3 );		
+		return xp3 + getImageCenterX(i);
 	}
 	function getAngledYP3(i){	
-		var xp3 = getXP3(i) - getXP1(i);
-		var yp3 = getYP3(i) - getYP1(i);
-		yp3 = parseFloat( - Math.sin((360 - rotation[i])*Math.PI/180) * xp3 + Math.cos((360 - rotation[i])*Math.PI/180) * yp3 );		
-		return yp3 + getYP1(i);
+		var xp3 = getXP3(i) - getImageCenterX(i);
+		var yp3 = getYP3(i) - getImageCenterY(i);
+		var r = rotation[i];
+		yp3 = parseFloat( - Math.sin( r * Math.PI/180) * xp3 + Math.cos( r * Math.PI/180) * yp3 );		
+		return yp3 + getImageCenterY(i);
 	}
 	
 	function getAngledXP4(i){
-		var xp4 = getXP4(i) - getXP1(i);
-		var yp4 = getYP4(i) - getYP1(i);		
-		xp4 = parseFloat( Math.cos((360 - rotation[i])*Math.PI/180) * xp4 + Math.sin((360 - rotation[i])*Math.PI/180) * yp4 );
-		return xp4 + getXP1(i);
+		var xp4 = getXP4(i) - getImageCenterX(i);
+		var yp4 = getYP4(i) - getImageCenterY(i);		
+		var r = rotation[i];
+		xp4 = parseFloat( Math.cos( r * Math.PI/180) * xp4 + Math.sin( r * Math.PI/180) * yp4 );
+		return xp4 + getImageCenterX(i);		
 	}
 	function getAngledYP4(i){	
-		var xp4 = getXP4(i) - getXP1(i);
-		var yp4 = getYP4(i) - getYP1(i);
-		yp4 = parseFloat( - Math.sin((360 - rotation[i])*Math.PI/180) * xp4 + Math.cos((360 - rotation[i])*Math.PI/180) * yp4 );	
-		return yp4 + getYP1(i);
+		var xp4 = getXP4(i) - getImageCenterX(i);
+		var yp4 = getYP4(i)  - getImageCenterY(i);
+		var r = rotation[i];		
+		yp4 = parseFloat( - Math.sin( r * Math.PI/180) * xp4 + Math.cos( r * Math.PI/180) * yp4 );	
+		return yp4 + getImageCenterY(i);		
 	}
 	
-	function getAngledFXP1(i){	return getFXP1(i);	}
-	function getAngledFYP1(i){	return getFYP1(i);	}	
+	function getAngledFXP1(i){	
+		var xp1 = getFXP1(i) - getFontCenterX(i);
+		var yp1 = getFYP1(i) - getFontCenterY(i);
+		var r = fontRotation[i];
+		xp1 = parseFloat( Math.cos( r * Math.PI/180) * xp1 + Math.sin( r * Math.PI/180) * yp1 );
+		return xp1 + getFontCenterX(i);	
+	}
+	function getAngledFYP1(i){	
+		var xp1 = getFXP1(i) - getFontCenterX(i);
+		var yp1 = getFYP1(i) - getFontCenterY(i);
+		var r = fontRotation[i];
+		yp1 = parseFloat( - Math.sin( r * Math.PI/180) * xp1 + Math.cos( r * Math.PI/180) * yp1 );	
+		return yp1 + getFontCenterY(i);			
+	}	
+
 	function getAngledFXP2(i){
-		var xp2 = getFXP2(i) - getFXP1(i);
-		var yp2 = getFYP2(i) - getFYP1(i);		
-		xp2 = parseFloat( Math.cos((360 - fontRotation[i])*Math.PI/180) * xp2 + Math.sin((360 - fontRotation[i])*Math.PI/180) * yp2 );		
-		return xp2 + getFXP1(i);
+		var xp2 = getFXP2(i) - getFontCenterX(i);
+		var yp2 = getFYP2(i) - getFontCenterY(i);
+		var r = fontRotation[i];
+		xp2 = parseFloat( Math.cos( r * Math.PI/180) * xp2 + Math.sin( r * Math.PI/180) * yp2 );
+		return xp2 + getFontCenterX(i);	
 	}
 	function getAngledFYP2(i){
-		var xp2 = getFXP2(i) - getFXP1(i);
-		var yp2 = getFYP2(i) - getFYP1(i);
-		yp2 = parseFloat( - Math.sin((360 -fontRotation[i])*Math.PI/180) * xp2 + Math.cos((360 - fontRotation[i])*Math.PI/180) * yp2 );			
-		return yp2 + getFYP1(i);
+		var xp2 = getFXP2(i) - getFontCenterX(i);
+		var yp2 = getFYP2(i) - getFontCenterY(i);
+		var r = fontRotation[i];
+		yp2 = parseFloat( - Math.sin( r * Math.PI/180) * xp2 + Math.cos( r * Math.PI/180) * yp2 );	
+		return yp2 + getFontCenterY(i);	
 	}	
 	function getAngledFXP3(i){
-		var xp3 = getFXP3(i) - getFXP1(i);
-		var yp3 = getFYP3(i) - getFYP1(i);		
-		xp3 = parseFloat( Math.cos((360 - fontRotation[i])*Math.PI/180) * xp3 + Math.sin((360 - fontRotation[i])*Math.PI/180) * yp3 );		
-		return xp3 + getFXP1(i);
+		var xp3 = getFXP3(i) - getFontCenterX(i);
+		var yp3 = getFYP3(i) - getFontCenterY(i);
+		var r = fontRotation[i];
+		xp3 = parseFloat( Math.cos( r * Math.PI/180) * xp3 + Math.sin( r * Math.PI/180) * yp3 );
+		return xp3 + getFontCenterX(i);	
 	}
 	function getAngledFYP3(i){
-		var xp3 = getFXP3(i) - getFXP1(i);
-		var yp3 = getFYP3(i) - getFYP1(i);
-		yp3 = parseFloat( - Math.sin((360 - fontRotation[i])*Math.PI/180) * xp3 + Math.cos((360 - fontRotation[i])*Math.PI/180) * yp3 );		
-		return yp3 + getFYP1(i);
+		var xp3 = getFXP3(i) - getFontCenterX(i);
+		var yp3 = getFYP3(i) - getFontCenterY(i);
+		var r = fontRotation[i];
+		yp3 = parseFloat( - Math.sin( r * Math.PI/180) * xp3 + Math.cos( r * Math.PI/180) * yp3 );	
+		return yp3 + getFontCenterY(i);	
 	}
 	function getAngledFXP4(i){
-		var xp4 = getFXP4(i) - getFXP1(i);
-		var yp4 = getFYP4(i) - getFYP1(i);		
-		xp4 = parseFloat( Math.cos((360 - fontRotation[i])*Math.PI/180) * xp4 + Math.sin((360 - fontRotation[i])*Math.PI/180) * yp4 );
-		return xp4 + getFXP1(i);
+		var xp4 = getFXP4(i) - getFontCenterX(i);
+		var yp4 = getFYP4(i) - getFontCenterY(i);
+		var r = fontRotation[i];
+		xp4 = parseFloat( Math.cos( r * Math.PI/180) * xp4 + Math.sin( r * Math.PI/180) * yp4 );
+		return xp4 + getFontCenterX(i);	
 	}
 	function getAngledFYP4(i){
-		var xp4 = getFXP4(i) - getFXP1(i);
-		var yp4 = getFYP4(i) - getFYP1(i);
-		yp4 = parseFloat( - Math.sin((360 - fontRotation[i])*Math.PI/180) * xp4 + Math.cos((360 - fontRotation[i])*Math.PI/180) * yp4 );	
-		return yp4 + getFYP1(i);
+		var xp4 = getFXP4(i) - getFontCenterX(i);
+		var yp4 = getFYP4(i) - getFontCenterY(i);
+		var r = fontRotation[i];
+		yp4 = parseFloat( - Math.sin( r * Math.PI/180) * xp4 + Math.cos( r * Math.PI/180) * yp4 );	
+		return yp4 + getFontCenterY(i);	
 	}
 	
 	function getImageRadious(i){	return parseInt(imgRads[i]);	}
@@ -650,7 +698,7 @@ ready = function() {
 	} 
 
 	
-	function setFontWidth(i,w){	fonts[i].width = w;	}	
+	function setFontWidth(i,w){	fontWidth[i] = w;	}	
 	function setFontStartingPointX(i,pos){fontStartX[i] = pos;	}
 	function setFontStartingPointY(i,pos){fontStartY[i] = pos;	}
 	function setSelected(b){	fontSelected = b	}
@@ -662,7 +710,7 @@ ready = function() {
 	function setFBoardColor(fc){	fBoardColor = fc;	}
 	function setBBoardColor(bc){	bBoardColor = bc;	}
 
-	function drawDots(i){
+	function drawDots(i,isFont){
 		/*
 		console.log("XP1 "+ getXP1(i) + " YP1 " + getYP1(i) + " XP2 " + getXP2(i) + " YP2 " + getYP2(i)
 							+	"\nXP3 "+ getXP3(i) + " YP3 " + getYP3(i) + " XP4 " + getXP4(i) + " YP4 " + getYP4(i) 
@@ -673,42 +721,71 @@ ready = function() {
 							);
 		*/
 		var rotated = false; 
-		console.log("fontSelected " + getSelected() );
-		if(getSelected()){
-			xp1 = getFXP1(i);	yp1 = getFYP1(i) - getFontHeight(i);
-			xp2 = getFXP2(i);	yp2 = getFYP2(i) - getFontHeight(i);
-			xp3 = getFXP3(i);	yp3 = getFYP3(i) - getFontHeight(i);
-			xp4 = getFXP4(i);	yp4 = getFYP4(i) - getFontHeight(i);		
+		console.log("fontSelected " + isFont );
 
+
+		if(isFont){
+			xp1 = getFXP1(i);	yp1 = getFYP1(i);
+			xp2 = getFXP2(i);	yp2 = getFYP2(i);
+			xp3 = getFXP3(i);	yp3 = getFYP3(i);
+			xp4 = getFXP4(i);	yp4 = getFYP4(i);
+
+			axp1 = getAngledFXP1(i);	ayp1 = getAngledFYP1(i);
+			axp2 = getAngledFXP2(i);	ayp2 = getAngledFYP2(i);
+			axp3 = getAngledFXP3(i);	ayp3 = getAngledFYP3(i);
+			axp4 = getAngledFXP4(i);	ayp4 = getAngledFYP4(i);		
+
+			cx = getFontCenterX(i);	cy = getFontCenterY(i);
+			w = getFontWidth(i); h = getFontHeight(i);
+			ctx.font = "10px Arial";
 			console.log(	"xp1 " + xp1 + " yp1 " + yp1 + " xp2 " + xp2 + " yp2 " + yp2 + " xp3 " + xp3 + " yp3 " + yp3 + " xp4 " + xp4 + " yp4 " + yp4	);
-			console.log(	"cur X " + getCurrentPointerPositionX() + " cur Y " +getCurrentPointerPositionY() );
+			console.log(	"cur X " + getCurrentPointerPositionX() + " cur Y " +getCurrentPointerPositionY() + " target # "+i + " rotation " + fontRotation[i]);
 			if(fontRotation[i] != 0){
-				ctx.translate(-xp1,-yp1);
+				ctx.translate(-xp1 - w/2,-yp1 - h/2);
 				rotated = true; 
 			}
+
 		}else{
 			xp1 = getXP1(i);	yp1 = getYP1(i);
 			xp2 = getXP2(i);	yp2 = getYP2(i);
 			xp3 = getXP3(i);	yp3 = getYP3(i);
 			xp4 = getXP4(i);	yp4 = getYP4(i);
+
+			axp1 = getAngledXP1(i);	ayp1 = getAngledYP1(i);
+			axp2 = getAngledXP2(i);	ayp2 = getAngledYP2(i);
+			axp3 = getAngledXP3(i);	ayp3 = getAngledYP3(i);
+			axp4 = getAngledXP4(i);	ayp4 = getAngledYP4(i);		
+			ctx.font = "10px Arial";
+			cx = getImageCenterX(i); cy = getImageCenterY(i);
+			w = imgs[i].width; h = imgs[i].height;
 			if(rotation[i] != 0){
-				ctx.translate(-xp1,-yp1);			
+				ctx.translate(-xp1 -w/2 ,-yp1 - h/2 );			
 				rotated = true; 
 			}
-			ctx.beginPath()
-			ctx.arc(xp2,yp2,resizeRad,0,pi2,false);		
-			ctx.stroke();	
-			ctx.beginPath();			
-			ctx.arc(xp3,yp3,resizeRad,0,pi2,false);
-			ctx.stroke();	
-		}					
-		ctx.beginPath();		
-		ctx.arc(xp1,yp1,resizeRad,0,pi2,false);
-		ctx.stroke();
-		ctx.beginPath();	
-		ctx.arc(xp4,yp4,resizeRad,0,pi2,false);
-		ctx.stroke();					
-						
+		}
+		ctx.beginPath();
+		ctx.arc(axp1,ayp1,resizeRad,0,pi2,false);		
+		ctx.stroke();	
+		ctx.beginPath();
+		ctx.arc(axp2,ayp2,resizeRad,0,pi2,false);		
+		ctx.stroke();	
+		ctx.beginPath();
+		ctx.arc(axp3,ayp3,resizeRad,0,pi2,false);		
+		ctx.stroke();	
+		ctx.beginPath();
+		ctx.arc(axp4,ayp4,resizeRad,0,pi2,false);		
+		ctx.stroke();	
+		ctx.beginPath();
+		ctx.arc(cx,cy,resizeRad,0,pi2,false);		
+		ctx.stroke();	
+
+		ctx.fillText("NONE", axp1,ayp1);
+		ctx.fillText("<- Image Width ->", axp2,ayp2);
+		ctx.fillText("<- Image Height ->", axp3,ayp3);
+		ctx.fillText("<- Image Height & Width ->",axp4,ayp4);
+		ctx.fillText("Moving Center",cx,cy);
+		
+
 		if(rotated){
 			ctx.translate(getDefaultWidth(),getDefaultHeight());
 		}
@@ -731,11 +808,11 @@ ready = function() {
 							);
 				if(strs[x] != ''){
 					if((getCurrentPointerPositionX() >= getFXP1(x) - resizeRad && getCurrentPointerPositionX() <= getFXP2(x) + resizeRad 
-						&& getCurrentPointerPositionY() >= getFYP1(x) - resizeRad - getFontHeight(x)  && getCurrentPointerPositionY() <= getFYP3(x) + resizeRad - getFontHeight(x) )
+						&& getCurrentPointerPositionY() >= getFYP1(x) - resizeRad   && getCurrentPointerPositionY() <= getFYP3(x) + resizeRad )
 						|| (getCurrentPointerPositionX() >= getFMinX(x) - resizeRad && getCurrentPointerPositionX() <= getFMaxX(x) + resizeRad
-						&& getCurrentPointerPositionY() >= getFMinY(x) - getFontHeight(x) - resizeRad && getCurrentPointerPositionY() <= getFMaxY(x) + resizeRad - getFontHeight(x))  
+						&& getCurrentPointerPositionY() >= getFMinY(x) - resizeRad && getCurrentPointerPositionY() <= getFMaxY(x) + resizeRad)  
 					){					
-						console.log("font Contents no. " + x);
+						console.log("font Contents no. " + x);						
 						return x; 
 					}
 				}
@@ -755,7 +832,7 @@ ready = function() {
 						&& getCurrentPointerPositionY() >= getYP1(w) - resizeRad  && getCurrentPointerPositionY() <= getYP3(w) + resizeRad )
 						|| (getCurrentPointerPositionX() >= getMinX(w) - resizeRad && getCurrentPointerPositionX() <= getMaxX(w) + resizeRad
 						&& getCurrentPointerPositionY() >= getMinY(w) - resizeRad && getCurrentPointerPositionY() <= getMaxY(w) + resizeRad)  
-					){					
+					){											
 						return w; 
 					}
 				}
@@ -769,37 +846,37 @@ ready = function() {
 		num = getElemNumber(e);
 		if(num != -1){
 			// selected P1
-			if(isFontElem(e)){
-				if(( getCurrentPointerPositionX() <= getFXP3(num) + resizeRad && getCurrentPointerPositionX() >= getFXP3(num) - resizeRad 
-					&& getCurrentPointerPositionY() <= getFYP3(num) + resizeRad && getCurrentPointerPositionY() >= getFYP3(num) - resizeRad  )
-					|| ( getCurrentPointerPositionX() <= getAngledFXP3(num) + resizeRad && getCurrentPointerPositionX() >= getAngledFXP3(num) - resizeRad 
-					&& getCurrentPointerPositionY() <= getAngledFYP3(num) + resizeRad  && getCurrentPointerPositionY() >= getAngledFYP3(num)  - resizeRad ) 
+			if(isFontElem(e)){				
+				if(( getCurrentPointerPositionX() <= getFXP1(num) + resizeRad && getCurrentPointerPositionX() >= getFXP1(num) - resizeRad 
+					&& getCurrentPointerPositionY() <= getFYP1(num) + resizeRad && getCurrentPointerPositionY() >= getFYP1(num) - resizeRad  )
+					/*|| ( getCurrentPointerPositionX() <= getAngledFXP1(num) + resizeRad && getCurrentPointerPositionX() >= getAngledFXP1(num) - resizeRad 
+					&& getCurrentPointerPositionY() <= getAngledFYP1(num) + resizeRad  && getCurrentPointerPositionY() >= getAngledFYP1(num)  - resizeRad ) */
 					){
 					return 1;
 				}
-				if((getCurrentPointerPositionX() <= getFXP4(num) + resizeRad && getCurrentPointerPositionX() >= getFXP4(num) - resizeRad 
-					&& getCurrentPointerPositionY() <= getFYP4(num) + resizeRad && getCurrentPointerPositionY() >= getFYP4(num) - resizeRad )  
-					|| ( getCurrentPointerPositionX() <= getAngledFXP4(num) + resizeRad && getCurrentPointerPositionX() >= getAngledFXP4(num) - resizeRad 
-					&& getCurrentPointerPositionY() <= getAngledFYP4(num) + resizeRad  && getCurrentPointerPositionY() >= getAngledFYP4(num)  - resizeRad ) 
+				if((getCurrentPointerPositionX() <= getFXP2(num) + resizeRad && getCurrentPointerPositionX() >= getFXP2(num) - resizeRad 
+					&& getCurrentPointerPositionY() <= getFYP2(num) + resizeRad && getCurrentPointerPositionY() >= getFYP2(num) - resizeRad )  
+					/*|| ( getCurrentPointerPositionX() <= getAngledFXP2(num) + resizeRad && getCurrentPointerPositionX() >= getAngledFXP2(num) - resizeRad 
+					&& getCurrentPointerPositionY() <= getAngledFYP2(num) + resizeRad  && getCurrentPointerPositionY() >= getAngledFYP2(num)  - resizeRad ) */
 					){
 					return 2;
 				}
-				if((getCurrentPointerPositionX() <= getFXP1(num) + resizeRad && getCurrentPointerPositionX() >= getFXP1(num) - resizeRad 
-					&& getCurrentPointerPositionY() <= getFYP1(num) + resizeRad && getCurrentPointerPositionY() >= getFYP1(num) - resizeRad )
-					|| ( getCurrentPointerPositionX() <= getAngledFXP1(num)  + resizeRad && getCurrentPointerPositionX() >= getAngledFXP1(num) - resizeRad 
-					&& getCurrentPointerPositionY() <= getAngledFYP1(num)  + resizeRad && getCurrentPointerPositionY() >= getAngledFYP1(num) - resizeRad  ) 
+				if((getCurrentPointerPositionX() <= getFXP3(num) + resizeRad && getCurrentPointerPositionX() >= getFXP3(num) - resizeRad 
+					&& getCurrentPointerPositionY() <= getFYP3(num) + resizeRad && getCurrentPointerPositionY() >= getFYP3(num) - resizeRad )
+					/*|| ( getCurrentPointerPositionX() <= getAngledFXP3(num)  + resizeRad && getCurrentPointerPositionX() >= getAngledFXP3(num) - resizeRad 
+					&& getCurrentPointerPositionY() <= getAngledFYP3(num)  + resizeRad && getCurrentPointerPositionY() >= getAngledFYP3(num) - resizeRad  ) */
 					){
 					return 3;
 				}
-				if(( getCurrentPointerPositionX() <= getFXP2(num) + resizeRad && getCurrentPointerPositionX() >= getFXP2(num) - resizeRad
-					&& getCurrentPointerPositionY() <= getFYP2(num) + resizeRad && getCurrentPointerPositionY() >= getFYP2(num) - resizeRad )
-					|| ( getCurrentPointerPositionX() <= getAngledFXP2(num)  + resizeRad && getCurrentPointerPositionX() >= getAngledFXP2(num) - resizeRad 
-					&& getCurrentPointerPositionY() <= getAngledFYP2(num)  + resizeRad && getCurrentPointerPositionY() >= getAngledFYP2(num) - resizeRad  )
+				if(( getCurrentPointerPositionX() <= getFXP4(num) + resizeRad && getCurrentPointerPositionX() >= getFXP4(num) - resizeRad
+					&& getCurrentPointerPositionY() <= getFYP4(num) + resizeRad && getCurrentPointerPositionY() >= getFYP4(num) - resizeRad )
+					/*|| ( getCurrentPointerPositionX() <= getAngledFXP4(num)  + resizeRad && getCurrentPointerPositionX() >= getAngledFXP4(num) - resizeRad 
+					&& getCurrentPointerPositionY() <= getAngledFYP4(num)  + resizeRad && getCurrentPointerPositionY() >= getAngledFYP4(num) - resizeRad  )*/
 				){
 					return 4;
 				}
 			}
-			else{
+			else if(isImgElem(e)){
 				if((getCurrentPointerPositionX() <= getXP1(num) + resizeRad && getCurrentPointerPositionX() >= getXP1(num) - resizeRad 
 				 && getCurrentPointerPositionY() <= getYP1(num) + resizeRad && getCurrentPointerPositionY() >= getYP1(num) - resizeRad  )
 				){
@@ -807,21 +884,27 @@ ready = function() {
 				}
 				if((getCurrentPointerPositionX() <= getXP2(num) + resizeRad && getCurrentPointerPositionX() >= getXP2(num) - resizeRad 
 				 	&& getCurrentPointerPositionY() <= getYP2(num) + resizeRad && getCurrentPointerPositionY() >= getYP2(num) - resizeRad )  
-				 	||(getCurrentPointerPositionX() <= getAngledXP2(num) + resizeRad && getCurrentPointerPositionX() >= getAngledXP2(num) - resizeRad 
-				 	&& getCurrentPointerPositionY() <= getAngledYP2(num) + resizeRad  && getCurrentPointerPositionY() >= getAngledYP2(num)  - resizeRad ) 
+				 	/*||(rotation[num] != 0 && rotation[num] != 360)
+				 	&&(getCurrentPointerPositionX() <= getAngledXP2(num) + resizeRad && getCurrentPointerPositionX() >= getAngledXP2(num) - resizeRad 
+				 	&& getCurrentPointerPositionY() <= getAngledYP2(num) + resizeRad  && getCurrentPointerPositionY() >= getAngledYP2(num)  - resizeRad )*/ 
 				){
 					return 2;
 				}
-				if((getCurrentPointerPositionX() <= getXP3(num) + resizeRad && getCurrentPointerPositionX() >= getXP3(num) - resizeRad 
+				if(
+					(getCurrentPointerPositionX() <= getXP3(num) + resizeRad && getCurrentPointerPositionX() >= getXP3(num) - resizeRad 
 					&& getCurrentPointerPositionY() <= getYP3(num) + resizeRad && getCurrentPointerPositionY() >= getYP3(num) - resizeRad )
-					|| ( getCurrentPointerPositionX() <= getAngledXP3(num)  + resizeRad && getCurrentPointerPositionX() >= getAngledXP3(num) - resizeRad 
-					&& getCurrentPointerPositionY() <= getAngledYP3(num)  + resizeRad && getCurrentPointerPositionY() >= getAngledYP3(num) - resizeRad  )){
+					/*|| (rotation[num] != 0 && rotation[num] != 360)
+					&&( getCurrentPointerPositionX() <= getAngledXP3(num)  + resizeRad && getCurrentPointerPositionX() >= getAngledXP3(num) - resizeRad 
+					&& getCurrentPointerPositionY() <= getAngledYP3(num)  + resizeRad && getCurrentPointerPositionY() >= getAngledYP3(num) - resizeRad  )*/
+					){
 					return 3;
 				}
-				if(( getCurrentPointerPositionX() <= getXP4(num) + resizeRad && getCurrentPointerPositionX() >= getXP4(num) - resizeRad
+				if(
+					( getCurrentPointerPositionX() <= getXP4(num) + resizeRad && getCurrentPointerPositionX() >= getXP4(num) - resizeRad
 					&& getCurrentPointerPositionY() <= getYP4(num) + resizeRad && getCurrentPointerPositionY() >= getYP4(num) - resizeRad )
-					|| ( getCurrentPointerPositionX() <= getAngledXP4(num)  + resizeRad && getCurrentPointerPositionX() >= getAngledXP4(num) - resizeRad 
-					&& getCurrentPointerPositionY() <= getAngledYP4(num)  + resizeRad && getCurrentPointerPositionY() >= getAngledYP4(num) - resizeRad  )
+					/*|| (rotation[num] != 0 && rotation[num] != 360)
+					&&( getCurrentPointerPositionX() <= getAngledXP4(num)  + resizeRad && getCurrentPointerPositionX() >= getAngledXP4(num) - resizeRad 
+					&& getCurrentPointerPositionY() <= getAngledYP4(num)  + resizeRad && getCurrentPointerPositionY() >= getAngledYP4(num) - resizeRad  )*/
 					){
 					return 4;
 				}
@@ -850,15 +933,15 @@ ready = function() {
 					// (curPosX <= getFXP1(num) + resizeRad && curPosX >= getFXP1(num) - resizeRad && curPosY <= getFYP1(num) + resizeRad && curPosY >= getFYP1(num) - resizeRad  )
 				  //|| (curPosX <= getFXP2(num) + resizeRad && curPosX >= getFXP2(num) - resizeRad && curPosY <= getFYP2(num) + resizeRad && curPosY >= getFYP2(num) - resizeRad  )
 					// (curPosX <= getFXP3(num) + resizeRad && curPosX >= getFXP3(num) - resizeRad && curPosY <= getFYP3(num) + resizeRad && curPosY >= getFYP3(num) - resizeRad  )
-				  (curPosX <= getFXP4(num) + resizeRad && curPosX >= getFXP4(num) - resizeRad && curPosY <= getFYP4(num) - getFontHeight(num) + resizeRad && curPosY >= getFYP4(num) - getFontHeight(num) - resizeRad  )
+				  (curPosX <= getFXP4(num) + resizeRad && curPosX >= getFXP4(num) - resizeRad && curPosY <= getFYP4(num) + resizeRad && curPosY >= getFYP4(num) - resizeRad  )
 				 // || (curPosX <= getAngledFXP2(num) + resizeRad  && curPosX >= getAngledFXP2(num) - resizeRad  && curPosY <= getAngledFYP2(num)+ resizeRad  && curPosY >= getAngledFYP2(num) - resizeRad  )
 				 // || (curPosX <= getAngledFXP3(num) + resizeRad  && curPosX >= getAngledFXP3(num) - resizeRad  && curPosY <= getAngledFYP3(num)+ resizeRad  && curPosY >= getAngledFYP3(num) - resizeRad  )
-				 || (curPosX <= getAngledFXP4(num) + resizeRad && curPosX >= getAngledFXP4(num)  - resizeRad && curPosY <= getAngledFYP4(num) - getFontHeight(num) + resizeRad && curPosY >= getAngledFYP4(num) - getFontHeight(num) - resizeRad )
+				 || (curPosX <= getAngledFXP4(num) + resizeRad && curPosX >= getAngledFXP4(num) - resizeRad && curPosY <= getAngledFYP4(num) + resizeRad && curPosY >= getAngledFYP4(num) - resizeRad )
 				){
 					return true;
 				}
 			}
-			else{
+			else if(isImgElem(e)){
 				if( 
 				//	(curPosX <= getXP1(num) + resizeRad && curPosX >= getXP1(num) - resizeRad && curPosY <= getYP1(num) + resizeRad && curPosY >= getYP1(num) - resizeRad  )
 				 (curPosX <= getXP2(num) + resizeRad && curPosX >= getXP2(num) - resizeRad && curPosY <= getYP2(num) + resizeRad && curPosY >= getYP2(num) - resizeRad  )
@@ -882,19 +965,29 @@ ready = function() {
 		console.log("mouseDown" + "\nCurX " +getCurrentPointerPositionX() + " CurY " + getCurrentPointerPositionY());
 		console.log("Width : " + parseFloat(ctx.measureText(strs[0]).width));
 		console.log("FX1 : " + getAngledFXP1(0) + " FY1 " + getAngledFYP1(0));
-		// capture all the elements coordinate 
-		if(isFontElem(e)){	setSelected(true); }
-		else if(imageCount > 0 )
-		{			
+		// capture all the elements coordinate 	
+		if(isFontElem(e)){		
 			num = getElemNumber(e);
 			if(num >-1){
-				$("#img-ctling").empty().append("Currently Selected Image No. " + num );
+				$("#img-ctling").empty().append("Currently Selected Font No. " + num  + " rotation angle "+ getAngle(num,getSelected()));
 				 selectedElementNo = num;
 			}
 			else{
 				$("#img-ctling").empty();
 			}
-			setSelected(false);
+		}
+		else if(isImgElem(e))
+		{	
+			
+			num = getElemNumber(e);
+			if(num >-1){
+				$("#img-ctling").empty().append("Currently Selected Image No. " + num  + " rotation angle "+ getAngle(num,getSelected()));
+				 selectedElementNo = num;
+			}
+			else{
+				$("#img-ctling").empty();
+			}
+			
 		}
 		if(isResizable(e)){
 			console.log("resizable");
@@ -912,13 +1005,13 @@ ready = function() {
 
 	var angle = 0; 
 	
-	function setAngle(value,k){
+	function setAngle(value,k,isFont){
 		angle = 360 - value;
-		if(getSelected()){
-			console.log("font rotation ");
-			fontRotation[k] = angle;
+		if(isFont){
+			console.log("font rotation " + k);
+			fontRotation[k-1] = angle;
 		}else{
-			console.log("image rotation ");
+			console.log("image rotation " + k);
 			rotation[k] = angle;	
 		}
 		console.log(angle);
@@ -934,21 +1027,41 @@ ready = function() {
 		
 		for(i = 0; i < fontCounts; i++){
 			console.log(i+ " FXP1 " + getFXP1(i) + " FYP1 " + getFYP1(i) + " FX2 " + getFXP2(i) + " FYP3 " + getFYP3(i) + " curX "+ getCurrentPointerPositionX() +" cur Y "+ getCurrentPointerPositionY());
+			console.log(i+ " AFXP1 " + getAngledFXP1(i) + " AFYP1 " + getAngledFYP1(i) + " AFX2 " + getAngledFXP2(i) + " AFYP3 " + getAngledFYP3(i) );
 			if(strs[i] != ''){
 				if( (getCurrentPointerPositionX() >= getFXP1(i) - resizeRad && getCurrentPointerPositionX() <= getFXP2(i) + resizeRad
-					&& getCurrentPointerPositionY() >= getFYP1(i) - getFontHeight(i) - resizeRad && getCurrentPointerPositionY() <= getFYP3(i) - getFontHeight(i) + resizeRad )
-					|| (getCurrentPointerPositionX() >= getAngledFXP1(i) - resizeRad && getCurrentPointerPositionX() <= getAngledFXP2(i) + resizeRad
-					&& getCurrentPointerPositionY() >= getAngledFYP1(i) - getFontHeight(i) - resizeRad && getCurrentPointerPositionY() <= getAngledFYP3(i) - getFontHeight(i) + resizeRad )
+					&& getCurrentPointerPositionY() >= getFYP1(i) - resizeRad && getCurrentPointerPositionY() <= getFYP3(i) + resizeRad )
+					/*|| (getCurrentPointerPositionX() >= getAngledFXP1(i) - resizeRad && getCurrentPointerPositionX() <= getAngledFXP2(i) + resizeRad
+					&& getCurrentPointerPositionY() >= getAngledFYP1(i) - resizeRad && getCurrentPointerPositionY() <= getAngledFYP3(i) + resizeRad )*/
 					){
 					console.log("this is font elem ");
-					//setSelected(true);
+					setSelected(true);
 					return true; 
 				}
 			}
 		}
 		
-		//setSelected(false);
 		console.log("this is not a font: fontCounts "+ fontCounts + " str[0] " + strs[0] );
+	//setSelected(false);
+		return false; 		
+	}
+	function isImgElem(e){
+		
+		setCurrentPointerPosition(e);
+		
+		for(i = 0; i < imageCount; i++){
+			if(strs[i] != ''){
+				if( (getCurrentPointerPositionX() >= getXP1(i) - resizeRad && getCurrentPointerPositionX() <= getXP2(i) + resizeRad
+					&& getCurrentPointerPositionY() >= getYP1(i) - resizeRad && getCurrentPointerPositionY() <= getYP3(i) + resizeRad )
+					|| (getCurrentPointerPositionX() >= getAngledXP1(i) - resizeRad && getCurrentPointerPositionX() <= getAngledXP2(i) + resizeRad
+					&& getCurrentPointerPositionY() >= getAngledYP1(i) - resizeRad && getCurrentPointerPositionY() <= getAngledYP3(i) + resizeRad )
+					){
+					
+					setSelected(false);
+					return true; 
+				}
+			}
+		}
 		return false; 		
 	}
 	function mouseMove(e){
@@ -960,32 +1073,30 @@ ready = function() {
 				ctx.clearRect(0,0,canvas.width,canvas.height);		
 				console.log(img+ " " + e + " " +imgLoader[0]);
 				// font action 
-				if(isFontElem(e)){					
+				if(isFontElem(e)){										
 					fontNum = getElemNumber(e);
 					console.log("font NUm " + fontNum );
 					if(typeof fonts[fontNum] != 'undefined'){
 						setCurrentPointerPosition(e);																					
-						fontStartX[fontNum] = getCurrentPointerPositionX() - getDistanceOf(getAngledFXP3(fontNum),getAngledFYP3(fontNum),getAngledFXP4(fontNum),getAngledFYP4(fontNum)) /2;
-						fontStartY[fontNum] = getCurrentPointerPositionY() - getDistanceOf(getAngledFXP3(fontNum),getAngledFYP3(fontNum),getAngledFXP1(fontNum),getAngledFYP1(fontNum)) /2 + getFontHeight(x);	
+						fontStartX[fontNum] = getCurrentPointerPositionX() - getDistanceOf(getFXP1(fontNum),getFYP1(fontNum),getFontCenterX(fontNum),getFontCenterY(fontNum)) /1000;
+						fontStartY[fontNum] = getCurrentPointerPositionY() - getDistanceOf(getFXP1(fontNum),getFYP1(fontNum),getFontCenterX(fontNum),getFontCenterY(fontNum)) /1000;	
 
 						console.log("Font Start x1 : " + fontStartX[fontNum] + " y1: " + fontStartY[fontNum]);
-						//setSelected(true);
+					
 					}
 					// setSelected(false);
 				}
 				// image action 
-				else {
+				else if(isImgElem(e)){
 					num = getElemNumber(e);
 					if(typeof imgs[num] != 'undefined'){
 						setCurrentPointerPosition(e);										
 											
-						imgStartX[num] = getCurrentPointerPositionX() - getDistanceOf(getAngledXP1(num),getAngledYP1(num),getAngledXP2(num),getAngledYP2(num)) /2;
-						imgStartY[num] = getCurrentPointerPositionY() - getDistanceOf(getAngledXP1(num),getAngledYP1(num),getAngledXP3(num),getAngledYP3(num)) /2;				
+						imgStartX[num] = getCurrentPointerPositionX() - getDistanceOf(getXP1(num),getYP1(num),getImageCenterX(num),getImageCenterY(num))/1000;
+						imgStartY[num] = getCurrentPointerPositionY() - getDistanceOf(getXP1(num),getYP1(num),getImageCenterX(num),getImageCenterY(num))/1000;				
 
-						console.log(imgs[num]+ " "+ imgStartX[num] +" "+ imgStartY[num]+ " " +imgs[num].width+" "+imgs[num].height);		
-									
-					}
-					//setSelected(false);	
+						console.log(imgs[num]+ " "+ imgStartX[num] +" "+ imgStartY[num]+ " " +imgs[num].width+" "+imgs[num].height);											
+					}					
 				}
 				draw(false,false);				
 			}
@@ -1004,7 +1115,7 @@ ready = function() {
 							// resize P1,P2
 							console.log("case 2");
 							setCurrentPointerPosition(e);	
-							if(num != -1){							
+						/*	if(num != -1){							
 								if(getCurrentPointerPositionX() != getFXP2(num) && getCurrentPointerPositionX() != getFXP1(num)){
 									diff = parseInt(getCurrentPointerPositionX() - getFXP3(num));
 									console.log("new width " + diff);
@@ -1013,20 +1124,21 @@ ready = function() {
 													
 								}
 								draw(false,false);
-							} 
+							}
+							*/ 
 							break;
 						case 3:
 							// resize P3, P1
 							console.log("case 3");	
 							setCurrentPointerPosition(e);							
-							if(num != -1){
+							/*if(num != -1){
 								if(getCurrentPointerPositionY() != getFYP3(num) && getCurrentPointerPositionY() != getFYP1(num) ){
-									diff = parseInt(getFontWidth(num) + getCurrentPointerPositionY() - getFYP1(num));
+									diff = parseInt(getCurrentPointerPositionY() - getFYP1(num));
 									console.log("new height " + diff);								
 									setFontSize(num, diff);
 								}							
 								draw(false,false);
-							}
+							}*/
 							
 							break;
 						case 4:
@@ -1035,8 +1147,8 @@ ready = function() {
 							console.log("case 4 " + (getCurrentPointerPositionX(e) - offsetX) + " " + (getCurrentPointerPositionY(e) - offsetY) + " " + num );
 							// shrinking returns number 
 							if(num != -1){
-								if(getCurrentPointerPositionY() != getFYP3(num) - getFontHeight(num) && getCurrentPointerPositionY() != getFYP4(num) - getFontHeight(num)){
-									diff = parseInt(getFontHeight(num) + getCurrentPointerPositionY() - getAngledFYP2(num));
+								if(getCurrentPointerPositionY() != getFYP3(num) && getCurrentPointerPositionY() != getFYP4(num)){
+									diff = parseInt(getCurrentPointerPositionY() - getFYP2(num));
 									
 									console.log("new height " + diff);
 									setFontSize(num, diff);
@@ -1048,11 +1160,11 @@ ready = function() {
 									setFontWidth(num, diff);						
 								}
 								draw(false,false);
-							} 
+							} 						
 							break;
 					}
 				}
-				else{
+				else if(isImgElem(e)){					
 					console.log("resizeable selectedPoint " + selectedPoint);
 					switch (selectedPoint){
 						case 1:
@@ -1067,7 +1179,7 @@ ready = function() {
 							setCurrentPointerPosition(e);	
 							if(num != -1){								
 								if(getCurrentPointerPositionX() != getXP2(num) && getCurrentPointerPositionX() != getXP1(num)){
-									diff = parseInt(getCurrentPointerPositionX() - getXP3(num));
+									diff = parseFloat(getCurrentPointerPositionX() - getXP3(num));
 									console.log("new width " + diff);
 									setImageWidth(num, diff);						
 								}
@@ -1080,7 +1192,7 @@ ready = function() {
 							setCurrentPointerPosition(e);							
 							if(num != -1){
 								if(getCurrentPointerPositionY() != getYP3(num) && getCurrentPointerPositionY() != getYP1(num) ){
-									diff = parseInt(getCurrentPointerPositionY() - getYP1(num));
+									diff = parseFloat(getCurrentPointerPositionY() - getYP1(num));
 									console.log("new height " + diff);
 									setImageHeight(num, diff);
 								}							
@@ -1095,14 +1207,14 @@ ready = function() {
 							// shrinking returns number 
 							if(num != -1){
 								if(getCurrentPointerPositionY() != getYP3(num) && getCurrentPointerPositionY() != getYP4(num) ){
-									diff = parseInt(getCurrentPointerPositionY() - getAngledYP2(num));
+									diff = parseFloat(getCurrentPointerPositionY() - getYP2(num));
 									
 									console.log("new height " + diff);
 									setImageHeight(num, diff);
 								}							
 								if((getCurrentPointerPositionX() != getXP3(num) && getCurrentPointerPositionX() != getXP4(num))							
 								){
-									diff = parseInt(getCurrentPointerPositionX() - getXP3(num));
+									diff = parseFloat(getCurrentPointerPositionX() - getXP3(num));
 									console.log("new width " + diff);
 									setImageWidth(num, diff);						
 								}
@@ -1169,6 +1281,7 @@ ready = function() {
 	}
 
 	var pi2 = Math.PI * 2;
+	var pi = Math.PI;
 	function draw(img,anchor, boarder){
 	console.log("draw");
 		// clear the canvas 
@@ -1178,46 +1291,63 @@ ready = function() {
 		if(fontCounts > -1){
 			for(f = 0; f < fonts.length; f++){
 				ctx.save();
-				if(strs[f] != ''){				
-					if(fontRotation[f] != 0){
+				if(strs[f] != ''){	
+					console.log("****** font rotation ****");
+					console.log("rotation rate : "+ fontRotation[f]);			
+					if(fontRotation[f]!= 0 ){
 						console.log("Font Rotation in Draw");
-						ctx.translate(getFXP1(f),getFYP1(f));
-						ctx.rotate(fontRotation[f]*Math.PI/180);						
-						ctx.fillText(strs[f], 0,0);		
-						drawDots(f);
+						ctx.translate(getFontCenterX(f),getFontCenterY(f));
+						ctx.rotate(fontRotation[f]*Math.PI/180);
+						ctx.font = getFontString(f);				
+						ctx.fillText(strs[f],-getFontCenterX(f)+getFXP3(f) , - getFontCenterY(f) + getFYP3(f));	
+						//setSelected(true);	
+						setFontWidth(f,parseFloat(ctx.measureText(strs[f]).width));
+						drawDots(f,true);
+						
 						ctx.translate(getDefaultWidth(),getDefaultHeight());	
 
 					}
 					else{				
 						console.log("font in draw " + getFontString(f));								
 						ctx.font = getFontString(f);
-						ctx.fillText(strs[f], getFXP1(f),getFYP1(f));				
-						drawDots(f);
+						ctx.fillText(strs[f], getFXP3(f), getFYP3(f));		
+						//setSelected(true);		
+						setFontWidth(f,parseFloat(ctx.measureText(strs[f]).width));
+						drawDots(f,true);
+
 					}	
+					
 					ctx.restore();
-				}			
+				}	
+
 			}
+			
 		}
 		// drawing / restoring images 
 		if(imageCount >-1){
 			for(p = 0; p< imgs.length;p++){						
 				ctx.save();
+				console.log("imgs[p] " + imgs[p] );
 				if(imgs[p] != null){
+					console.log("****** image rotation ****");
+					console.log("rotation rate : "+ rotation[p]);		
 					setImageRadious(p);
 					// rotating 
 					if(rotation[p] != 0){
-						//ctx.translate(getImageCenterX(p), getImageCenterY(p));
-						ctx.translate(getXP1(p) , getYP1(p) );
+						
+						ctx.translate(getImageCenterX(p) , getImageCenterY(p) );
 						console.log("image center X "+ getImageCenterX(p) + " image center Y " +  getImageCenterY(p) + " XP1 " + getXP1(p) + " YP1 " +getYP1(p));				
+
 						ctx.rotate(rotation[p]*Math.PI/180);
+						
 						// here need to track all the corners of image 
-						ctx.drawImage(imgs[p],0, 0,imgs[p].width,imgs[p].height);						
-						drawDots(p);
+						ctx.drawImage(imgs[p],-getImageWidth(p)/2, -getImageHeight(p)/2,imgs[p].width,imgs[p].height);						
+						drawDots(p,false);
 						ctx.translate(getDefaultWidth(),getDefaultHeight());				
 					}
 					else{
-						ctx.drawImage(imgs[p],imgStartX[p],imgStartY[p],imgs[p].width,imgs[p].height);				
-						drawDots(p);
+						ctx.drawImage(imgs[p],getXP1(p),getYP1(p),imgs[p].width,imgs[p].height);				
+						drawDots(p,false);
 					}									
 					ctx.restore();		
 				}
@@ -1228,21 +1358,9 @@ ready = function() {
 	function setFrontData(){
 		frontData = {
 			"side": "front",
-				"images":[
-					{	"imgURL":"","xp1":0,	"xp2":0,	"xp3":0,	"xp4":0, "axp1":0,	"axp2":0,	"axp3":0,	"axp4":0,	"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"imgURL":"","xp1":0,	"xp2":0,	"xp3":0,	"xp4":0, "axp1":0,	"axp2":0,	"axp3":0,	"axp4":0,	"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"imgURL":"","xp1":0,	"xp2":0,	"xp3":0,	"xp4":0, "axp1":0,	"axp2":0,	"axp3":0,	"axp4":0,	"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"imgURL":"","xp1":0,	"xp2":0,	"xp3":0,	"xp4":0, "axp1":0,	"axp2":0,	"axp3":0,	"axp4":0,	"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"imgURL":"","xp1":0,	"xp2":0,	"xp3":0,	"xp4":0, "axp1":0,	"axp2":0,	"axp3":0,	"axp4":0,	"angle":0,"width":0,"height":0, "scale":0 	}
-				],
-				"fonts":[
-					{	"font":"text",	"fxp1":0,	"fxp2":0,	"fxp3":0,	"fxp4":0,	"afxp1":0,	"afxp2":0,	"afxp3":0,	"afxp4":0,"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"font":"text",	"fxp1":0,	"fxp2":0,	"fxp3":0,	"fxp4":0,	"afxp1":0,	"afxp2":0,	"afxp3":0,	"afxp4":0,"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"font":"text",	"fxp1":0,	"fxp2":0,	"fxp3":0,	"fxp4":0,	"afxp1":0,	"afxp2":0,	"afxp3":0,	"afxp4":0,"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"font":"text",	"fxp1":0,	"fxp2":0,	"fxp3":0,	"fxp4":0,	"afxp1":0,	"afxp2":0,	"afxp3":0,	"afxp4":0,"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"font":"text",	"fxp1":0,	"fxp2":0,	"fxp3":0,	"fxp4":0,	"afxp1":0,	"afxp2":0,	"afxp3":0,	"afxp4":0,"angle":0,"width":0,"height":0, "scale":0 	},
-				],
-				"backgroundColor":"#FFFFFF"
+			"images":getImagesDATA(),
+			"fonts":getFontsDATA(),
+			"backgroundColor":"#FFFFFF"
 		}
 		console.log("frontData" + frontData );
 	}
@@ -1250,20 +1368,8 @@ ready = function() {
 	function setBackData(){
 		backData = {
 			"side": "back",
-				"images":[
-					{	"imgURL":"","xp1":0,	"xp2":0,	"xp3":0,	"xp4":0, "axp1":0,	"axp2":0,	"axp3":0,	"axp4":0,	"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"imgURL":"","xp1":0,	"xp2":0,	"xp3":0,	"xp4":0, "axp1":0,	"axp2":0,	"axp3":0,	"axp4":0,	"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"imgURL":"","xp1":0,	"xp2":0,	"xp3":0,	"xp4":0, "axp1":0,	"axp2":0,	"axp3":0,	"axp4":0,	"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"imgURL":"","xp1":0,	"xp2":0,	"xp3":0,	"xp4":0, "axp1":0,	"axp2":0,	"axp3":0,	"axp4":0,	"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"imgURL":"","xp1":0,	"xp2":0,	"xp3":0,	"xp4":0, "axp1":0,	"axp2":0,	"axp3":0,	"axp4":0,	"angle":0,"width":0,"height":0, "scale":0 	}
-				],
-				"fonts":[
-					{	"font":"text",	"fxp1":0,	"fxp2":0,	"fxp3":0,	"fxp4":0,	"afxp1":0,	"afxp2":0,	"afxp3":0,	"afxp4":0,"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"font":"text",	"fxp1":0,	"fxp2":0,	"fxp3":0,	"fxp4":0,	"afxp1":0,	"afxp2":0,	"afxp3":0,	"afxp4":0,"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"font":"text",	"fxp1":0,	"fxp2":0,	"fxp3":0,	"fxp4":0,	"afxp1":0,	"afxp2":0,	"afxp3":0,	"afxp4":0,"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"font":"text",	"fxp1":0,	"fxp2":0,	"fxp3":0,	"fxp4":0,	"afxp1":0,	"afxp2":0,	"afxp3":0,	"afxp4":0,"angle":0,"width":0,"height":0, "scale":0 	},
-					{	"font":"text",	"fxp1":0,	"fxp2":0,	"fxp3":0,	"fxp4":0,	"afxp1":0,	"afxp2":0,	"afxp3":0,	"afxp4":0,"angle":0,"width":0,"height":0, "scale":0 	},
-				],
+				"images":getImagesDATA(),
+				"fonts":getFontsDATA(),
 				"backgroundColor":"#FFFFFF"
 		}
 		console.log("backData" + backData );
@@ -1277,7 +1383,8 @@ ready = function() {
 			image[ind] = {
 				"imgURL":"","xp1":getXP1(ind),	"xp2":getXP2(ind),	"xp3":getXP3(ind),	"xp4":getXP4(ind), 
 				"yp1":getYP1(ind), "yp2": getYP2(ind), "yp3": getYP3(ind), "yp4": getYP4(ind), "ayp1": getAngledYP1(ind), "ayp2": getAngledYP2(ind), "ayp3": getAngledYP3(ind), "ayp4": getAngledYP4(ind),
-				"axp1":getAngledXP1(ind),	"axp2":getAngledXP2(ind),	"axp3":getAngledXP3(ind),	"axp4":getAngledXP4(ind),	"angle":0,"width":0,"height":0, "scale":0 	
+				"axp1":getAngledXP1(ind),	"axp2":getAngledXP2(ind),	"axp3":getAngledXP3(ind),	"axp4":getAngledXP4(ind),	"angle":getAngle(ind,true),"width":getImageWidth(ind),"height":getImageHeight(ind),
+				"scale":getScale() 	
 			}
 			d[ind] = image[ind]; 
 		}
@@ -1290,9 +1397,9 @@ ready = function() {
 		var ind = 0;
 		for(ind; ind < fontCounts; ind++){
 			font[ind] = {
-				"font":"text",	"fxp1":getFX1(0),	"fxp2":getFX2(0),	"fxp3":getFX3(0),	"fxp4":getFX4(0),"fyp1":getFY1(0),	"fyp2":getFY2(0),	"fyp3":getFY3(0),	"fyp4":getFY4(0),	
-				"afxp1":getAngledFXP1(0),	"afxp2":getAngledFXP1(0),	"afxp3":getAngledFXP1(0),	"afxp4":getAngledFXP1(0),"afyp1":getAngledFYP1(0),	"afyp2":getAngledFYP2(0),	"afyp3":getAngledFYP3(0),	
-				"afyp4":getAngledFYP4(0),"angle":0,"width":0,"height":0, "scale":0 	
+				"font":"text",	"fxp1":getFX1(ind),	"fxp2":getFX2(ind),	"fxp3":getFX3(ind),	"fxp4":getFX4(ind),"fyp1":getFY1(ind),	"fyp2":getFY2(ind),	"fyp3":getFY3(ind),	"fyp4":getFY4(ind),	
+				"afxp1":getAngledFXP1(ind),	"afxp2":getAngledFXP1(ind),	"afxp3":getAngledFXP1(ind),	"afxp4":getAngledFXP1(ind),"afyp1":getAngledFYP1(ind),	"afyp2":getAngledFYP2(ind),	"afyp3":getAngledFYP3(ind),	
+				"afyp4":getAngledFYP4(ind),"angle":getAngle(ind,false),"width":getFontWidth(ind),"height":getFontHeight(ind), "scale":getScale() 	
 			}
 			d[ind] = font[ind]; 
 		}
@@ -1328,21 +1435,28 @@ ready = function() {
 				]
 			}
 		];// end of data 
-
-
-		// console.log("json parse " + data[0]["boarddata"][0]["images"][0]["xp1"]);
+		sendData(data);
 	}
 
 	// send data that created in saveData 
-	function sendData(data){
+	function sendData(postData){
 		$.ajax({
-			url: "",
-			type: "POST",
-			dataType: "json",
-			success: function(d){
-				// success msg
-			}
-		});
+		  type: "POST",
+		  url: "editor/saveboard",
+		  data: postData[0],
+		  contentType: "application/json",
+		  success: function(data) {		      
+		      alert("success");
+		  },
+		  error: function (XMLHttpRequest, textStatus, errorThrown) {		  	
+		    alert("fail");
+		  }
+	 	});
+
+	 //$.post("editor/saveboard",{data: postData[0]}).done(function(d) {
+   // 	console.log(d);
+   //});
+		
 	}
 
 	// capture the data and expot to img file 

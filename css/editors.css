@@ -27,6 +27,9 @@
 body{
 	background: #707070 !important;
 }
+#editor{
+	color: #000000;
+}
 /*#editor { #58ACFA}*/
 .black{ background: #000000;	}
 .white{ background: #FFFFFF;	}
@@ -227,8 +230,8 @@ body{
 	left:0;
 }
 .font-content{
-	width:30%;
-	height:80%;
+	/*width:30%;
+	height:30%;*/
 	left: 0 !important;
 	top:0 !important;
 } 
@@ -251,9 +254,7 @@ body{
     left: 2px;
     bottom: 2px;
 }
-.imgLoader{
-	margin: 3% 0 3% 0;
-}
+
 /*
 	Scrollbar trick 
 */

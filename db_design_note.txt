@@ -1,0 +1,40 @@
+
+			"side": "front",
+			"images":getImagesDATA(),
+			"fonts":getFontsDATA(),
+			"backgroundColor":"#FFFFFF"
+
+			"side": "back",
+			"images":getImagesDATA(),
+			"fonts":getFontsDATA(),
+			"backgroundColor":"#FFFFFF"
+
+			"imgURL":"","xp1":getXP1(ind),	"xp2":getXP2(ind),	"xp3":getXP3(ind),	"xp4":getXP4(ind), 
+			"yp1":getYP1(ind), "yp2": getYP2(ind), "yp3": getYP3(ind), "yp4": getYP4(ind), "ayp1": getAngledYP1(ind), "ayp2": getAngledYP2(ind), "ayp3": getAngledYP3(ind), "ayp4": getAngledYP4(ind),
+			"axp1":getAngledXP1(ind),	"axp2":getAngledXP2(ind),	"axp3":getAngledXP3(ind),	"axp4":getAngledXP4(ind),	"angle":getAngle(ind,0),"width":getImageWidth(ind),"height":getImageHeight(ind),
+			"scale":getScale() 	
+
+
+			"font":"text",	"fxp1":getFX1(ind),	"fxp2":getFX2(ind),	"fxp3":getFX3(ind),	"fxp4":getFX4(ind),"fyp1":getFY1(ind),	"fyp2":getFY2(ind),	"fyp3":getFY3(ind),	"fyp4":getFY4(ind),	
+			"afxp1":getAngledFXP1(ind),	"afxp2":getAngledFXP1(ind),	"afxp3":getAngledFXP1(ind),	"afxp4":getAngledFXP1(ind),"afyp1":getAngledFYP1(ind),	"afyp2":getAngledFYP2(ind),	"afyp3":getAngledFYP3(ind),	
+			"afyp4":getAngledFYP4(ind),"angle":getAngle(ind,1),"width":getFontWidth(ind),"height":getFontHeight(ind), "scale":getScale() 	
+	
+create table design(
+
+);
+
+create table design_has_many_images(
+
+);
+
+create table design_has_many_fonts(
+
+);
+
+create table images(
+
+);
+
+create table fonts(
+
+);
