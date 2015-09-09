@@ -16,12 +16,12 @@
 
 
 		<!-- CSS -->
-		<link rel="stylesheet" media="all" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
-		<link rel="stylesheet" media="all" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
-		<link rel="stylesheet" media="all" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
-		<link rel="stylesheet" media="all" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" />
-		<link rel="stylesheet" media="all" href="../css/slider.css" />
-		<link rel="stylesheet" media="all" href="../css/colpick.css" />
+		<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
+		<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
+		<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/slider.css" />
+		<link rel="stylesheet" type="text/css" href="../css/colpick.css" />
 		<link rel="stylesheet" type="text/css" href="../css/editors.css" />
 		<link rel="stylesheet" type="text/css" href="../css/application.css" />
 	</head>
