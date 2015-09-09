@@ -242,7 +242,7 @@ ready = function() {
 	var startY;
 	var isDown = false; 
 	
-	var resizeRad = 30;
+	var resizeRad = 45;
 	var resizerRadius = 4;
 	var rSq = resizerRadius * resizerRadius;
 	var draggingResizer = { 
