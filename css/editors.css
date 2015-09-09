@@ -204,12 +204,12 @@ body{
 	width: 50%;
 	background: rgba(225,225,225,0.9);
 	padding:1%;
-	position:fixed;	
-	z-index:10;
+	position:relative;	
+	z-index:11;
 	margin-right: auto;
 	margin-left:auto;
-	left: 25%;
-	bottom: 20%;
+	left: 0%;
+	bottom:0%;
 }
 /*
 #style-ctl, #size-ctl{
