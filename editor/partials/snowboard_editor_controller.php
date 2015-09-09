@@ -61,7 +61,7 @@
 			<h3>Rotation Controller</h3>
 			<p id="img-ctling"></p>
 		</div>
-		<div id="ctr-content" class="col-md-2">
+		<div id="ctr-content" class="col-md-12">
 			<div id='rotationSlider' class='slider' ></div>			
 		</div>
 	</div>

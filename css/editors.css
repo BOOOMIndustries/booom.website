@@ -217,11 +217,11 @@ body{
 			
 		position: relative;
 }*/
-.slider{
-	width: 100%;
+.slider,.slider-selection{
+	width: 50% !important;
 }
-#ex1, #rotationSlider, .slider-selection {
-	widht: 50%;
+#ex1, #rotationSlider{
+	width:50%;
 	background: #BABABA;
 }
 #colorBlash-ctl{

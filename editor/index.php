@@ -3,13 +3,11 @@
 	<head>
 		<title>BOOOMIndustries</title>
 		<!-- Javascript -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
-
+		<script src="../js/jquery-2.1.4.min.js"></script>
+		<script src="../js/jquery-ui.min.js"></script>
 		<script src="../js/jquery-ui.rotatable.js"></script>
 		<script src="../js/jquery.easing.js"></script>
 		<script src="../js/bootstrap-slider.js"></script>
-		<script src="../js/bootstrap.js"></script>
 		<script src="../js/colpick.js"></script>
 		<script src="../js/application.js"></script>
 		<script src="../js/editors.js"></script>
