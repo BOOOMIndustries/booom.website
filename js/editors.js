@@ -212,17 +212,21 @@ ready = function() {
 			var id = id_str.substring(3,id_str.length);
 			id = parseInt(id - 1);
 			deleteImage(id);
+			
 		}
 		// fonts 
 		else{
 			var id = id_str.substring(4,id_str.length);
-			var target = "#font-"+id;
 			id = parseInt(id - 1);
 			deleteFont(id);
-			$(target).val("");
-
+			
+			
 		}
 		return;
+	});
+
+	$("#startover").click(function(){
+		clearAll();
 	});
 /**************************************************************
 	Canvas Events 
@@ -242,7 +246,7 @@ ready = function() {
 	var startY;
 	var isDown = false; 
 	
-	var resizeRad = 45;
+	var resizeRad = 30;
 	var resizerRadius = 4;
 	var rSq = resizerRadius * resizerRadius;
 	var draggingResizer = { 
@@ -309,7 +313,7 @@ ready = function() {
 	
 	// add font 
 	$(".add-font").click(function(){
-		for(ind = 0; ind < 5; ind++ ){
+		for(ind = 0; ind < 6; ind++ ){
 			var id; 
 			if($(this).hasClass(ind)){
 				id = ind; 
@@ -378,10 +382,15 @@ ready = function() {
 	imgLoader[3] = document.getElementById('imgLoader4');
 	imgLoader[4] = document.getElementById('imgLoader5');
 
-	for(x = 0; x< 5; x++){
-		console.log(x+" "+ imgLoader[x]);
-			imgLoader[x].addEventListener('change',addImageToCanvas,true);
-	}
+	//for(x = 0; x< 5; x++){
+	//	console.log(x+" "+ imgLoader[x]);
+			imgLoader[0].addEventListener('change',function(e){ addImageToCanvas(e,0); },false);
+			imgLoader[1].addEventListener('change',function(e){ addImageToCanvas(e,1); },false);
+			imgLoader[2].addEventListener('change',function(e){ addImageToCanvas(e,2); },false);
+			imgLoader[3].addEventListener('change',function(e){ addImageToCanvas(e,3); },false);
+			imgLoader[4].addEventListener('change',function(e){ addImageToCanvas(e,4); },false);
+			
+	//}
 	var strs = [];
 	strs[0] = document.getElementById('')
 	/**
@@ -417,22 +426,52 @@ ready = function() {
 	function deleteImage(id){		
 		imgs[id] = null;
 		draw();
-		imageCount--;
+		if(id >= imageCount)
+		{	imageCount--;	}
+		if(id != 0 ){
+			$("#imgLoader"+parseInt(id+1)).val('');
+			$("#i"+parseInt(id+1)).addClass("hide");
+		}
+		else{
+			$("#imgLoader").val('');
+		}
 	}
 
 	function deleteFont(id){
 		strs[id] = '';
-		draw();
-		fontCounts--;
-
+		var target = "#font-"+parseInt(id+1);
+		draw();	
+		if(id >= fontCounts)
+		{	fontCounts--;		}
+		if(id != 0 ){
+			$("#f"+parseInt(id+1)).addClass("hide");
+		}
+		$(target).val("");
 	}
 
-	function addImageToCanvas(e){
-		var reader = new FileReader();		
+	function clearAll(){
+		for(i=0; i < imgs.length ; i++){	
+			if(imgs[i] != null){
+				deleteImage(i);
+			}	
+		} 
+		for(i=0; i < strs.length ; i++){	
+			if(strs[i]!= ''){
+				deleteFont(i);	
+			}
+		}
+		imageCount = 0;
+		fontCounts = 0;
+		draw();
+	}
+
+	function addImageToCanvas(e,id){
+		var reader = new FileReader();			
+		
 		reader.onload = function (event){
 			img = new Image();			
-			imgStartX[index] = getCenterOfWindowX();
-			imgStartY[index] = getCenterOfWindowY(); 			
+			imgStartX[id] = getCenterOfWindowX();
+			imgStartY[id] = getCenterOfWindowY(); 			
 			
 			img.onload = function(){	
 				img.width = getScaledImgWidth(img);
@@ -440,10 +479,10 @@ ready = function() {
 				draw(false,false);
 			}
 			img.src = event.target.result;
-			imgs[index] = img;	
-			rotation[index] = 0;
+			imgs[id] = img;	
+			rotation[id] = 0;
 			imageCount++;
-			index++;
+			 
 			setSelected(false);
 		}	
 		reader.readAsDataURL(e.target.files[0]);
@@ -799,14 +838,15 @@ ready = function() {
 		// element is not selected 
 		if(fontCounts > 0){
 			for(x=0; x < fonts.length; x++){
-				console.log("FXP1 "+ getFXP1(x) + " FYP1 " + getFYP1(x) + " FXP2 " + getFXP2(x) + " FYP2 " + getFYP2(x)
+				
+				if(strs[x] != ''){
+					console.log("FXP1 "+ getFXP1(x) + " FYP1 " + getFYP1(x) + " FXP2 " + getFXP2(x) + " FYP2 " + getFYP2(x)
 							+	"\nFXP3 "+ getFXP3(x) + " FYP3 " + getFYP3(x) + " FXP4 " + getFXP4(x) + " FYP4 " + getFYP4(x) 
 							+ "\nAFXP2 " + getAngledFXP2(x) + " AFYP2 " + getAngledFYP2(x) + " AFXP3 " + getAngledFXP3(x) + " AFYP3 " + getAngledFYP3(x)
 							+ "\nAFXP4 " + getAngledFXP4(x) + " AFYP4 " + getAngledFYP4(x) + "AFXP1 " + getAngledFXP1(x) + " AFYP1 " + getAngledFYP1(x) 
 							+ "\nCurX " + getCurrentPointerPositionX() + " CurY " + getCurrentPointerPositionY()
 							
 							);
-				if(strs[x] != ''){
 					if((getCurrentPointerPositionX() >= getFXP1(x) - resizeRad && getCurrentPointerPositionX() <= getFXP2(x) + resizeRad 
 						&& getCurrentPointerPositionY() >= getFYP1(x) - resizeRad   && getCurrentPointerPositionY() <= getFYP3(x) + resizeRad )
 						|| (getCurrentPointerPositionX() >= getFMinX(x) - resizeRad && getCurrentPointerPositionX() <= getFMaxX(x) + resizeRad
@@ -820,6 +860,8 @@ ready = function() {
 		}
 		if(imageCount > 0){
 			for(w=0;w< imgs.length; w++){			
+					
+				if(imgs[w] != null){	
 					console.log("XP1 "+ getXP1(w) + " YP1 " + getYP1(w) + " XP2 " + getXP2(w) + " YP2 " + getYP2(w)
 							+	"\nXP3 "+ getXP3(w) + " YP3 " + getYP3(w) + " XP4 " + getXP4(w) + " YP4 " + getYP4(w) 
 							+ "\nAXP2 " + getAngledXP2(w) + " AYP2 " + getAngledYP2(w) + " AXP3 " + getAngledXP3(w) + " AYP3 " + getAngledYP3(w)
@@ -827,7 +869,6 @@ ready = function() {
 							+ "\nCurX " +getCurrentPointerPositionX() + " CurY " + getCurrentPointerPositionY()
 							+ "\nWidth " + imgs[w].width + " height " + imgs[w].height + " angle " + rotation[w]
 							);
-				if(imgs[w] != null){	
 					if((getCurrentPointerPositionX() >= getXP1(w) - resizeRad && getCurrentPointerPositionX() <= getXP2(w) + resizeRad 
 						&& getCurrentPointerPositionY() >= getYP1(w) - resizeRad  && getCurrentPointerPositionY() <= getYP3(w) + resizeRad )
 						|| (getCurrentPointerPositionX() >= getMinX(w) - resizeRad && getCurrentPointerPositionX() <= getMaxX(w) + resizeRad
@@ -1050,7 +1091,8 @@ ready = function() {
 		setCurrentPointerPosition(e);
 		
 		for(i = 0; i < imageCount; i++){
-			if(strs[i] != ''){
+			console.log("@@@@@@ Image Count "+ imageCount + " i "+ i + " imgs "+ imgs[i]);
+			if(imgs[i] != null){
 				if( (getCurrentPointerPositionX() >= getXP1(i) - resizeRad && getCurrentPointerPositionX() <= getXP2(i) + resizeRad
 					&& getCurrentPointerPositionY() >= getYP1(i) - resizeRad && getCurrentPointerPositionY() <= getYP3(i) + resizeRad )
 					|| (getCurrentPointerPositionX() >= getAngledXP1(i) - resizeRad && getCurrentPointerPositionX() <= getAngledXP2(i) + resizeRad
@@ -1289,7 +1331,7 @@ ready = function() {
 		ctx.drawImage(snowboard, 0, parseInt(getWindowHeight()*0.1),getDefaultWidth(),getDefaultHeight());	
 		// drawing / restoring fonts 
 		if(fontCounts > -1){
-			for(f = 0; f < fonts.length; f++){
+			for(f = 0; f <= fonts.length; f++){
 				ctx.save();
 				if(strs[f] != ''){	
 					console.log("****** font rotation ****");

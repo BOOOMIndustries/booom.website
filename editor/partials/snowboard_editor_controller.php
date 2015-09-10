@@ -17,7 +17,7 @@
 			<div id="rot1" class="btn rrd rot "><i class="fa fa-repeat"></i></div>
 			<div id="res1" class="btn rrd res "><i class="fa fa-arrows-alt"></i></div>
 			<div id="dor1" class="btn rrd dor "><i class="fa fa-adjust"></i></div>
-			<div id="del1" class="btn del"><i class="fa fa-trash-o"></i></div>
+			<!-- <div id="del1" class="btn del"><i class="fa fa-trash-o"></i></div> -->
 		</div>
 		<div id="i2" class="col-md-12 hide">
 			<input type="file" id="imgLoader2" class=" imgLoader" name="imgLoader" />
@@ -61,7 +61,7 @@
 			<h3>Rotation Controller</h3>
 			<p id="img-ctling"></p>
 		</div>
-		<div id="ctr-content" class="col-md-12">
+		<div id="ctr-content" class="col-md-2">
 			<div id='rotationSlider' class='slider' ></div>			
 		</div>
 	</div>
@@ -138,7 +138,7 @@
 				<div id="frot1" class="btn frrd rot "><i class="fa fa-repeat"></i></div>
 				<div id="fres1" class="btn frrd res "><i class="fa fa-arrows-alt"></i></div>
 				<div id="fdor1" class="btn frrd dor "><i class="fa fa-adjust"></i></div>
-				<div id="fdel1" class="btn del"><i class="fa fa-trash-o"></i></div>
+				<!-- <div id="fdel1" class="btn del"><i class="fa fa-trash-o"></i></div>-->
 				<div class="btn btn-default add-font 1">Insert Text</div>
 			</div>
 		</div>
@@ -272,11 +272,11 @@
 		<i class="fa fa-paint-brush"></i>
 		<p class="center-text">Color</p>
 	</div>
-	<!-- zoom in -->
+	<!-- zoom in --
 	<div id="zoom" class="col-md-1 center-text cursor paletIcons front">
 		<i class="fa fa-search"></i>
 		<p class="center-text">Zoom</p>
-	</div>
+	</div>-->
 	<!-- zoom reset -->
 	<!--
 	<div id="zoomOrigin" class="col-md-1 center-text cursor paletIcons front">
