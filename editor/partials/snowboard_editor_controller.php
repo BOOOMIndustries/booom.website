@@ -138,6 +138,7 @@
 				<div id="frot1" class="btn frrd rot "><i class="fa fa-repeat"></i></div>
 				<div id="fres1" class="btn frrd res "><i class="fa fa-arrows-alt"></i></div>
 				<div id="fdor1" class="btn frrd dor "><i class="fa fa-adjust"></i></div>
+				<div id="fcol1" class="btn col"><i class="fa fa-paint-brush"></i></div>
 				<!-- <div id="fdel1" class="btn del"><i class="fa fa-trash-o"></i></div>-->
 				<div class="btn btn-default add-font 1">Insert Text</div>
 			</div>
@@ -154,6 +155,7 @@
 				<div id="frot2" class="btn frrd rot "><i class="fa fa-repeat"></i></div>
 				<div id="fres2" class="btn frrd res "><i class="fa fa-arrows-alt"></i></div>
 				<div id="fdor2" class="btn frrd dor "><i class="fa fa-adjust"></i></div>
+				<div id="fcol2" class="btn col"><i class="fa fa-paint-brush"></i></div>
 				<div id="fdel2" class="btn del"><i class="fa fa-trash-o"></i></div>
 				<div class="btn btn-default add-font 2">Insert Text</div>
 			</div>
@@ -170,6 +172,7 @@
 				<div id="frot3" class="btn frrd rot "><i class="fa fa-repeat"></i></div>
 				<div id="fres3" class="btn frrd res "><i class="fa fa-arrows-alt"></i></div>
 				<div id="fdor3" class="btn frrd dor "><i class="fa fa-adjust"></i></div>
+				<div id="fcol3" class="btn col"><i class="fa fa-paint-brush"></i></div>
 				<div id="fdel3" class="btn del"><i class="fa fa-trash-o"></i></div>
 				<div class="btn btn-default add-font 3">Insert Text</div>
 			</div>
@@ -186,6 +189,7 @@
 				<div id="frot4" class="btn frrd rot "><i class="fa fa-repeat"></i></div>
 				<div id="fres4" class="btn frrd res "><i class="fa fa-arrows-alt"></i></div>
 				<div id="fdor4" class="btn frrd dor "><i class="fa fa-adjust"></i></div>
+				<div id="fcol4" class="btn col"><i class="fa fa-paint-brush"></i></div>
 				<div id="fdel4" class="btn del"><i class="fa fa-trash-o"></i></div>
 				<div class="btn btn-default add-font 4">Insert Text</div>
 			</div>
@@ -196,12 +200,13 @@
 				<input id="font-5" class="front fonts form-control" />
 			</div>
 			<div class="col-md-3">
-				<?php include("font_options.html.erb"); ?>
+				<?php echo include("font_options.php"); ?>
 			</div>
 			<div class="col-md-6">
 				<div id="frot5" class="btn frrd rot "><i class="fa fa-repeat"></i></div>
 				<div id="fres5" class="btn frrd res "><i class="fa fa-arrows-alt"></i></div>
 				<div id="fdor5" class="btn frrd dor "><i class="fa fa-adjust"></i></div>
+				<div id="fcol5" class="btn col"><i class="fa fa-paint-brush"></i></div>
 				<div id="fdel5" class="btn del"><i class="fa fa-trash-o"></i></div>
 				<div class="btn btn-default add-font 5">Insert Text</div>
 			</div>
@@ -210,19 +215,20 @@
 		<div class="col-md-12">
 			<div id="add_text_field" class="btn"><i class="fa fa-plus"></i></div>
 		</div>
-	</div>
+	</div>	
+	
 </div>
 	
 
 
 <!-- color -->
-<div id="colorBlash-ctl" class="color-content palet-content draggable hide front rounded_corner draggable">
+<div id="colorBlash-ctl" class="color-content palet-content hide front rounded_corner draggable">
 	<i class="fa fa-times-circle-o close-window"></i>
-	<div class="picker"></div>
+	<div class="picker board"></div>
 </div>
 
 <!-- zooming bar -->
-<div id="zoom-ctl" class="zoom-content palet-content draggable hide front rounded_corner draggable">
+<div id="zoom-ctl" class="zoom-content palet-content hide front rounded_corner draggable">
 	<div class="row">
 		<div class="col-md-12">
 			<i class="fa fa-times-circle-o close-window right"></i>
