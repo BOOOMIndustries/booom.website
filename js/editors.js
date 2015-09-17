@@ -225,6 +225,7 @@ ready = function() {
 			$("#cgside").text("Bottom Side");
 			restoreFrontData();
 		}
+		draw();
 		return;
 	});
 
@@ -586,7 +587,8 @@ ready = function() {
 	function getImageCenterY(i){	return parseFloat((getYP1(i) + getYP3(i))/2); 	}	
 	function getFontCenterX(i){		return parseFloat((getFXP1(i) + getFXP2(i))/2);	}
 	function getFontCenterY(i){		return parseFloat((getFYP3(i) + getFYP1(i))/2);	}
-	function getImageURL(i){	return imgs[i].src; }
+	function getImageURL(i){	return imgs[i].src;		}
+	function getImageCounts(){	return imgs.length;	}
 	
 	// font points 
 	function getFXP1(i){	return parseFloat(fontStartX[i] - getFontWidth(i)/2);	 }
@@ -605,6 +607,7 @@ ready = function() {
 	function getFontColor(i){	return fontColors[i];	}
 	function getString(i){	return strs[i];	}
 	function getImgs(i){	return imgs[i];	}
+	function getFontCounts(){	return strs.length;	}
 	// max and min values 
 	function getMinX(i){	return Math.min(getAngledXP1(i), 	getAngledXP2(i),   getAngledXP3(i),  getAngledXP4(i));			}
 	function getMaxX(i){	return Math.max(getAngledXP1(i), 	getAngledXP2(i), 	 getAngledXP3(i),  getAngledXP4(i));			}
@@ -1103,10 +1106,10 @@ ready = function() {
 		console.log("isFontElem " + fontCounts);
 		setCurrentPointerPosition(e);
 		
-		for(i = 0; i < fontCounts; i++){
-			console.log(i+ " FXP1 " + getFXP1(i) + " FYP1 " + getFYP1(i) + " FX2 " + getFXP2(i) + " FYP3 " + getFYP3(i) + " curX "+ getCurrentPointerPositionX() +" cur Y "+ getCurrentPointerPositionY());
-			console.log(i+ " AFXP1 " + getAngledFXP1(i) + " AFYP1 " + getAngledFYP1(i) + " AFX2 " + getAngledFXP2(i) + " AFYP3 " + getAngledFYP3(i) );
+		for(i = 0; i < fontCounts; i++){			
 			if(strs[i] != ''){
+				console.log(i+ " FXP1 " + getFXP1(i) + " FYP1 " + getFYP1(i) + " FX2 " + getFXP2(i) + " FYP3 " + getFYP3(i) + " curX "+ getCurrentPointerPositionX() +" cur Y "+ getCurrentPointerPositionY());
+				console.log(i+ " AFXP1 " + getAngledFXP1(i) + " AFYP1 " + getAngledFYP1(i) + " AFX2 " + getAngledFXP2(i) + " AFYP3 " + getAngledFYP3(i) );
 				if( (getCurrentPointerPositionX() >= getFXP1(i) - resizeRad && getCurrentPointerPositionX() <= getFXP2(i) + resizeRad
 					&& getCurrentPointerPositionY() >= getFYP1(i) - resizeRad && getCurrentPointerPositionY() <= getFYP3(i) + resizeRad )
 					/*|| (getCurrentPointerPositionX() >= getAngledFXP1(i) - resizeRad && getCurrentPointerPositionX() <= getAngledFXP2(i) + resizeRad
@@ -1127,9 +1130,9 @@ ready = function() {
 		
 		setCurrentPointerPosition(e);
 		
-		for(i = 0; i < imageCount; i++){
-			console.log("@@@@@@ Image Count "+ imageCount + " i "+ i + " imgs "+ imgs[i]);
+		for(i = 0; i < imageCount; i++){			
 			if(imgs[i] != null){
+				console.log("@@@@@@ Image Count "+ imageCount + " i "+ i + " imgs "+ imgs[i]);
 				if( (getCurrentPointerPositionX() >= getXP1(i) - resizeRad && getCurrentPointerPositionX() <= getXP2(i) + resizeRad
 					&& getCurrentPointerPositionY() >= getYP1(i) - resizeRad && getCurrentPointerPositionY() <= getYP3(i) + resizeRad )
 					|| (getCurrentPointerPositionX() >= getAngledXP1(i) - resizeRad && getCurrentPointerPositionX() <= getAngledXP2(i) + resizeRad
@@ -1407,9 +1410,9 @@ ready = function() {
 		// drawing / restoring images 
 		if(imageCount >-1){
 			for(p = 0; p< imgs.length;p++){						
-				ctx.save();
-				console.log("imgs[p] " + imgs[p] );
+				ctx.save();				
 				if(imgs[p] != null){
+					console.log("imgs[p] " + imgs[p] );
 					console.log("****** image rotation ****");
 					console.log("rotation rate : "+ rotation[p]);		
 					setImageRadious(p);
@@ -1434,6 +1437,61 @@ ready = function() {
 				}
 			}
 		}
+	}
+
+	function finalizing(){
+		ctx.save();
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+		if(getSide() == 'front'){	ctx.fillStyle = getFBoardColor(); }
+		else{	ctx.fillStyle = getBBoardColor();	}
+
+		ctx.fillRect(0,0,canvas.width,canvas.height);
+		ctx.restore();
+		for(f = 0; f <= fonts.length; f++){
+			
+			if(strs[f] != ''){	
+				ctx.save();
+				if(fontRotation[f]!= 0 ){						
+					ctx.translate(getFontCenterX(f),getFontCenterY(f));
+					ctx.rotate(fontRotation[f]*Math.PI/180);
+					ctx.font = getFontString(f);
+					ctx.fillStyle=getFontColor(f);			
+					ctx.fillText(strs[f],-getFontCenterX(f)+getFXP3(f) , - getFontCenterY(f) + getFYP3(f));												
+					ctx.translate(getDefaultWidth(),getDefaultHeight());	
+
+				}
+				else{									
+					ctx.font = getFontString(f);
+					ctx.fillStyle = getFontColor(f);
+					ctx.fillText(strs[f], getFXP3(f), getFYP3(f));							
+				}	
+				ctx.restore();
+			}
+				
+		}	
+		
+		// drawing / restoring images 	
+		for(p = 0; p< imgs.length;p++){						
+			
+			if(imgs[p] != null){
+				setImageRadious(p);
+				ctx.save();
+				if(rotation[p] != 0){						
+					ctx.translate(getImageCenterX(p) , getImageCenterY(p) );						
+					ctx.rotate(rotation[p]*Math.PI/180);						
+					ctx.drawImage(imgs[p],-getImageWidth(p)/2, -getImageHeight(p)/2,imgs[p].width,imgs[p].height);						
+					ctx.translate(getDefaultWidth(),getDefaultHeight());				
+				}
+				else{
+					ctx.drawImage(imgs[p],getXP1(p),getYP1(p),imgs[p].width,imgs[p].height);				
+				}									
+				ctx.restore();
+			}
+			
+		}
+		ctx.save();
+		ctx.drawImage(snowboard, 0, parseInt(getWindowHeight()*0.1),getDefaultWidth(),getDefaultHeight());	
+		ctx.restore();
 	}
 
 	function setFrontData(){
@@ -1465,11 +1523,17 @@ ready = function() {
 			var bkcolor = frontData["backgroundColor"];
 
 			for(i = 0; i < images.length; i++){
-				imgStartX[i] = images[i]['xp1'] + images[i]['width']/2;
-				imgStartY[i] = images[i]['yp1'] + images[i]['height']/2;
-				rotation[i] = images[i]['angle'];
-				imgs[i] = images[i]['imgs'];
-				imageCount = images[i]['imageCount'];
+				if(images[i]!= null){
+					img = new Image();
+					img.src = images[i]['imgURL'];
+					img.width = images[i]['width'];
+					img.height = images[i]['height'];
+					imgStartX[i] = images[i]['xp1'] + images[i]['width']/2;
+					imgStartY[i] = images[i]['yp1'] + images[i]['height']/2;
+					rotation[i] = images[i]['angle'];
+					imgs[i] = img;
+					imageCount = images[i]['imageCount'];
+				}
 			}
 			i = 0;
 			console.log("@@@@ fonts length " + fonts.length);
@@ -1493,7 +1557,14 @@ ready = function() {
 			console.log(bkcolor);
 			setFBoardColor(bkcolor);		
 			colorPicked(bkcolor);
-			draw();
+			for(i=0;i<strs.length; i++){
+				$("#f"+parseInt(i+1)).removeClass("hide").addClass("show");
+				$("#font-"+parseInt(i+1)).val(strs[i]);
+				$("#ffam-"+parseInt(i+1) + " option[value='"+ fontFamilies[i] +"']").prop("selected",true);
+			}
+			for(i=0; i< imgs.length; i++){
+				$("#i"+parseInt(i+1)).removeClass("hide").addClass("show");
+			}
 		}
 	}
 
@@ -1506,11 +1577,17 @@ ready = function() {
 			var bkcolor = backData["backgroundColor"];
 
 			for(i = 0; i < images.length; i++){
-				imgStartX[i] = images[i]['xp1'] + images[i]['width']/2;
-				imgStartY[i] = images[i]['yp1'] + images[i]['height']/2;
-				rotation[i] = images[i]['angle'];
-				imgs[i] = images[i]['imgs'];
-				imageCount = images[i]['imageCount'];
+				if(images[i]!= null){
+					img = new Image(); 
+					img.src = images[i]['imgURL'];
+					img.width = images[i]['width'];
+					img.height = images[i]['height'];
+					imgStartX[i] = images[i]['xp1'] + images[i]['width']/2;
+					imgStartY[i] = images[i]['yp1'] + images[i]['height']/2;
+					rotation[i] = images[i]['angle'];
+					imgs[i] = img;
+					imageCount = images[i]['imageCount'];
+				}
 			}
 			console.log("@@@@ fonts length " + fonts.length);
 			for(i = 0; i < fontd.length; i++){
@@ -1533,8 +1610,15 @@ ready = function() {
 			}
 			console.log(bkcolor);
 			setBBoardColor(bkcolor);			
-			colorPicked(bkcolor);
-			draw();
+			colorPicked(bkcolor);		
+			for(i=0;i<strs.length; i++){
+				$("#f"+parseInt(i+1)).removeClass("hide").addClass("show");
+				$("#font-"+parseInt(i+1)).val(strs[i]);
+				$("#ffam-"+parseInt(i+1) + " option[value='"+ fontFamilies[i] +"']").prop("selected",true);
+			}
+			for(i=0; i< imgs.length; i++){
+				$("#i"+parseInt(i+1)).removeClass("hide").addClass("show");
+			}
 		}
 	}
 	
@@ -1544,11 +1628,14 @@ ready = function() {
 		var d = [];
 		var ind = 0;
 		for(ind; ind < imageCount; ind++){
-			image[ind] = {
-				"imgURL":getImageURL(ind),"xp1":getXP1(ind),	"xp2":getXP2(ind),	"xp3":getXP3(ind),	"xp4":getXP4(ind), 
-				"yp1":getYP1(ind), "yp2":getYP2(ind), "yp3":getYP3(ind), "yp4":getYP4(ind), "ayp1":getAngledYP1(ind), "ayp2":getAngledYP2(ind), "ayp3":getAngledYP3(ind), "ayp4":getAngledYP4(ind),
-				"axp1":getAngledXP1(ind),	"axp2":getAngledXP2(ind),	"axp3":getAngledXP3(ind),	"axp4":getAngledXP4(ind),	"angle":getAngle(ind,false),"width":getImageWidth(ind),"height":getImageHeight(ind),
-				"scale":getScale(), "imgs":getImgs(ind), "imageCount":imageCount 
+			if(imgs[ind] != null){
+				image[ind] = {
+					"imgURL":getImageURL(ind),"xp1":getXP1(ind),	"xp2":getXP2(ind),	"xp3":getXP3(ind),	"xp4":getXP4(ind), 
+					"yp1":getYP1(ind), "yp2":getYP2(ind), "yp3":getYP3(ind), "yp4":getYP4(ind), "ayp1":getAngledYP1(ind), "ayp2":getAngledYP2(ind), "ayp3":getAngledYP3(ind), "ayp4":getAngledYP4(ind),
+					"axp1":getAngledXP1(ind),	"axp2":getAngledXP2(ind),	"axp3":getAngledXP3(ind),	"axp4":getAngledXP4(ind),	"angle":getAngle(ind,false),"width":getImageWidth(ind),"height":getImageHeight(ind),
+					"scale":getScale(), "imageCount":imageCount
+				}
+			
 			}
 			d[ind] = image[ind]; 
 		}
@@ -1596,15 +1683,37 @@ ready = function() {
 							"images": getImagesDATA(),
 							"fonts": getFontsDATA(),
 							"backgroundColor":getBBoardColor()
-						}						
+						}			
+				],
+				"images":[
+					{
+						"front": getFrontExport(),
+						"back": getBottomExport()
+					}
 				]
 			}
 		];// end of data 
+
+		var fdata = [
+			{
+				"front":getFrontExport()
+			}
+		];
+
+		var bimage = [
+			{
+				"back":getBottomExport()
+			}
+		];
+
 		sendData(data,0);
+		//sendData(fimage,1);
+		//sendData(bimage,2);
 	}
 
 	// send data that created in saveData 
 	function sendData(postData,i){
+		console.log(postData);
 		var urls = ["/saveboard", "/saveFront","/saveBack"];
 		$.ajax({
 		  type: "POST",
@@ -1618,25 +1727,22 @@ ready = function() {
 		    alert("fail");
 		  }
 	 	});
-
-	 //$.post("editor/saveboard",{data: postData[0]}).done(function(d) {
-   // 	console.log(d);
-   //});
-		
+	}
+	function getFrontExport(){
+		restoreFrontData();
+		finalizing();	
+		var img = canvas.toDataURL("image/jpeg",1.0);		
+		//window.location = img;
+		return img;
 	}
 
-	// capture the data and expot to img file 
-	function exportToImage(){
-		var exp = canvas.toDataURL("image/png");
-
+	function getBottomExport(){
+		restoreBackData();
+		finalizing();
+		var img = canvas.toDataURL("image/jpeg",1.0);
+		//window.location = img;
+		return img;
 	}
-
-	// get data from server and place everything on it 
-	function recover(){
-
-	}
-
-
 
 };// end of JQuery 
 $(document).ready(ready);
